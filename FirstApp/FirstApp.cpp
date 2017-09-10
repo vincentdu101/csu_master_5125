@@ -81,8 +81,6 @@ init(void)
 	GLuint buffer;
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	
-	setupColor(colorOptions[0]);
 
 	// Load shaders and use the resulting shader program
 	program = InitShader("simpleShader.vert", "simpleShader.frag");
@@ -166,6 +164,27 @@ void makeLeftQuadrant() {
 	startingXPoint = (spaceBuffer * 2) - 0.95;
 	startingYPoint = (spaceBuffer * 20) - 1.05;
 	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 3, 'y', false);
+	startingYPoint -= spaceBuffer;
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 3, 'y', false);
+	startingYPoint -= spaceBuffer * 2;
+	startingXPoint += spaceBuffer;
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 3, 'x', false);
+	startingYPoint += spaceBuffer * 2;
+	startingXPoint += spaceBuffer * 2;
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'x', true);
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'y', true);
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 3, 'x', false);
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 3, 'y', false);
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 1, 'x', true);
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 1, 'y', true);
+	startingYPoint += spaceBuffer * 2;
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'x', true);
+	startingYPoint -= spaceBuffer * 2;
+	startingXPoint += spaceBuffer;
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 2, 'x', false);
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'y', false);
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'x', false);
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'y', false);
 }
 
 void
@@ -174,9 +193,7 @@ display(void)
 	glClear(GL_COLOR_BUFFER_BIT);				// clear the window
 	makeOuterWalls();
 	makeLeftQuadrant();
-
-
-
+	colorIndex = 0;								// need to reset otherwise colors keep changing
 	glFlush();									// flush the buffer
 }
 
@@ -209,7 +226,13 @@ keyboard(unsigned char key, int x, int y)
 			colorAltIndex = -1;
 			init();
 			break;
+		default:
+			break;
 	}
+}
+
+void mouseClicks(int button, int state, int x, int y) {
+	return;
 }
 
 //----------------------------------------------------------------------------
@@ -243,6 +266,8 @@ main(int argc, char **argv)
 	glutDisplayFunc(display);
 	// provide the functions that handles the keyboard
 	glutKeyboardFunc(keyboard);
+	// provide the functions that handles the mouse clicks
+	glutMouseFunc(mouseClicks);
 
 	// Wait for input from the user (the only meaningful input is the key escape)
 	glutMainLoop();
