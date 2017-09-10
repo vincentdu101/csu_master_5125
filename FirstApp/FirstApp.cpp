@@ -154,10 +154,11 @@ void makeOuterWalls() {
 	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 20, 'y', true);
 	startingXPoint += spaceBuffer;
 	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 18, 'x', true);
-	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 17, 'y', false);
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 8, 'y', false);
+	startingYPoint -= spaceBuffer * 1;
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 8, 'y', false);
 	startingYPoint -= spaceBuffer * 2;
-	startingXPoint += spaceBuffer;
-	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 20, 'x', false);
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 18, 'x', false);
 }
 
 void makeLeftQuadrant() {
@@ -168,7 +169,8 @@ void makeLeftQuadrant() {
 	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 3, 'y', false);
 	startingYPoint -= spaceBuffer * 2;
 	startingXPoint += spaceBuffer;
-	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 3, 'x', false);
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 1, 'x', false);
+	startingXPoint -= spaceBuffer * 2;
 	startingYPoint += spaceBuffer * 2;
 	startingXPoint += spaceBuffer * 2;
 	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'x', true);
@@ -185,6 +187,36 @@ void makeLeftQuadrant() {
 	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'y', false);
 	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'x', false);
 	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'y', false);
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 3, 'y', false);
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 2, 'x', false);
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 6, 'y', true);
+	startingXPoint += spaceBuffer * 4;
+	startingYPoint += spaceBuffer;
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 8, 'y', false);
+	startingYPoint += spaceBuffer * 7;
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'x', true);
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 9, 'y', true);
+	startingXPoint += spaceBuffer;
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 6, 'x', true);
+	startingXPoint -= spaceBuffer * 5;
+	startingYPoint -= spaceBuffer;
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 14, 'y', false);
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 6, 'x', false);
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 4, 'y', true);
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 4, 'x', true);
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 2, 'y', false);
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 2, 'x', false);
+	startingXPoint += spaceBuffer * 6;
+	startingYPoint -= spaceBuffer * 3;
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 15, 'y', true);
+	startingYPoint -= spaceBuffer * 6;
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'y', true);
+	startingXPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 1, 'x', true);
+	startingYPoint -= spaceBuffer * 2;
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'y', false);
+	startingYPoint -= spaceBuffer * 2;
+	startingXPoint += spaceBuffer * 2;
+	startingYPoint = generateTrianglesConsecutively(startingXPoint, startingYPoint, 5, 'y', true);
 }
 
 void
@@ -194,6 +226,7 @@ display(void)
 	makeOuterWalls();
 	makeLeftQuadrant();
 	colorIndex = 0;								// need to reset otherwise colors keep changing
+	colorAltIndex = colorAltIndex == -1 ? -1 : 0;
 	glFlush();									// flush the buffer
 }
 
@@ -213,26 +246,26 @@ keyboard(unsigned char key, int x, int y)
 		case 'f':
 			fillMode = true;
 			init();
+			glutPostRedisplay();
 			break;
 		case 'w':
 			fillMode = false;
 			init();
+			glutPostRedisplay();
 			break;
 		case 'u':
 			colorAltIndex = 0;
 			init();
+			glutPostRedisplay();
 			break;
 		case 'v':
 			colorAltIndex = -1;
 			init();
+			glutPostRedisplay();
 			break;
 		default:
 			break;
 	}
-}
-
-void mouseClicks(int button, int state, int x, int y) {
-	return;
 }
 
 //----------------------------------------------------------------------------
@@ -266,8 +299,6 @@ main(int argc, char **argv)
 	glutDisplayFunc(display);
 	// provide the functions that handles the keyboard
 	glutKeyboardFunc(keyboard);
-	// provide the functions that handles the mouse clicks
-	glutMouseFunc(mouseClicks);
 
 	// Wait for input from the user (the only meaningful input is the key escape)
 	glutMainLoop();
