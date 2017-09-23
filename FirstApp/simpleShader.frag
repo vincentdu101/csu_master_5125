@@ -1,10 +1,9 @@
 #version 150
 
-in vec4 rColor;
 out vec4  fColor;
 
 void
 main()
 {
-    fColor = rColor;
+    fColor = vec4( 1.0, 0.0, 0.0, 1.0 );
 }
