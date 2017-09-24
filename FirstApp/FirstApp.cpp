@@ -7,6 +7,7 @@ GLuint program = 0;
 GLfloat radians = 0.0;
 GLfloat offset = 0.0;
 GLfloat offsetx = 0.0;
+GLfloat speed = 0.001;
 
 //----------------------------------------------------------------------------
 /* This function initializes an array of 3d vectors
@@ -125,7 +126,7 @@ display(void)
 void
 idle()
 {
-	radians += 0.001;
+	radians += speed;
 	offset = cos(radians) * 0.5;
 	offsetx = sin(radians) * 1.2;
 	glutPostRedisplay();
@@ -145,6 +146,37 @@ keyboard(unsigned char key, int x, int y)
 		exit(EXIT_SUCCESS);	// terminates the program
 		break;
 	}
+}
+
+void
+handleMenu(int id)
+{
+	switch (id)
+	{
+	case 0:
+		//glClear(GL_COLOR_BUFFER_BIT);
+		speed *= 1.1;
+		break;
+	case 1:
+		exit(0);
+		break;
+	case 2:
+		speed *= 0.9;
+		break;
+	default:
+		break;
+	}
+}
+
+void
+createMenu()
+{
+	int menu_id = glutCreateMenu(handleMenu);
+	glutAddMenuEntry("slowdown", 2);
+	glutAddMenuEntry("speedup", 0);
+	glutAddMenuEntry("exit", 1);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+
 }
 
 //----------------------------------------------------------------------------
@@ -178,6 +210,8 @@ main(int argc, char **argv)
 	glutDisplayFunc(display);
 	// provide the functions that handles the keyboard
 	glutKeyboardFunc(keyboard);
+	// create menu
+	createMenu();
 
 	glutIdleFunc(idle);
 
