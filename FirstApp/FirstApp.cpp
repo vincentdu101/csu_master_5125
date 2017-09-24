@@ -4,6 +4,9 @@
 
 const int NumPoints = 6;
 GLuint program = 0;
+GLfloat radians = 0.0;
+GLfloat offset = 0.0;
+GLfloat offsetx = 0.0;
 
 //----------------------------------------------------------------------------
 /* This function initializes an array of 3d vectors
@@ -92,15 +95,22 @@ call it directly.
 void
 display(void)
 {
-	GLint offsetParam;
+	GLint offsetParam, offsetxParam;
 	offsetParam = glGetUniformLocation(program, "offset");
+	offsetxParam = glGetUniformLocation(program, "offsetx");
 
 	glClear(GL_COLOR_BUFFER_BIT);				// clear the window
 	glUniform1f(offsetParam, -0.5);
+	glUniform1f(offsetxParam, 0.0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDrawArrays(GL_TRIANGLES, 3, 3);
 
-	glUniform1f(offsetParam, 0.5);
+	glUniform1f(offsetParam, offset);
+	glUniform1f(offsetxParam, offsetx);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDrawArrays(GL_TRIANGLES, 0, 3);    // draw the points
+	glUniform1f(offsetxParam, 0.0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glUniform1f(offsetParam, 0.25);
 	glDrawArrays(GL_TRIANGLES, 2, 3);
 	glUniform1f(offsetParam, -0.75);
@@ -108,7 +118,17 @@ display(void)
 
 	glUniform1f(offsetParam, 0.0);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glFlush();									// flush the buffer
+	//glFlush();									// flush the buffer
+	glutSwapBuffers();
+}
+
+void
+idle()
+{
+	radians += 0.001;
+	offset = cos(radians) * 0.5;
+	offsetx = sin(radians) * 1.2;
+	glutPostRedisplay();
 }
 
 //----------------------------------------------------------------------------
@@ -138,7 +158,7 @@ main(int argc, char **argv)
 	// Initialize GLUT
 	glutInit(&argc, argv);
 	// Initialize the display mode to a buffer with Red, Green, Blue and Alpha channels
-	glutInitDisplayMode(GLUT_RGBA);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	// Set the window size
 	glutInitWindowSize(512, 512);
 	// Here you set the OpenGL version
@@ -158,6 +178,8 @@ main(int argc, char **argv)
 	glutDisplayFunc(display);
 	// provide the functions that handles the keyboard
 	glutKeyboardFunc(keyboard);
+
+	glutIdleFunc(idle);
 
 	// Wait for input from the user (the only meaningful input is the key escape)
 	glutMainLoop();
