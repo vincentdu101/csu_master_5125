@@ -7,13 +7,6 @@ c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(723): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(726): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(743): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(7): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(51): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(52): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(53): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(152): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(153): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(165): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(166): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(54): warning C4305: 'initializing': truncation from 'double' to 'float'
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\FirstAppGLEW\Debug\FirstApp.exe
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\FirstAppGLEW\Debug\FirstApp.pdb (Partial PDB)
