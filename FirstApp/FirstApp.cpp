@@ -2,9 +2,9 @@
 
 #include "Angel.h"
 
-const int NumPoints = 8;
+const int NumPoints = 6;
 GLuint program = 0;
-float spaceBuffer = 0.0;
+float spaceBuffer;
 float startingXPoint = 0.0;
 float startingYPoint = 0.0;
 vec3 points[NumPoints];
@@ -19,10 +19,11 @@ vec3 colorOptions[] = {
 	vec3(0.0, 0.0, 1.0),
 	vec3(1.0, 1.0, 0.0),
 	vec3(0.0, 1.0, 1.0),
-	vec3(1.0, 1.0, 0.0),
-	vec3(0.0, 1.0, 1.0),
-	vec3(1.0, 0.0, 1.0)
+	vec3(1.0, 1.0, 0.0)
 };
+
+enum DIRECTION { X, Y };
+enum SIGN {Positive, Negative};
 
 //----------------------------------------------------------------------------
 /* This function initializes an array of 3d vectors
@@ -35,11 +36,8 @@ void setupColor(vec3 color) {
 	colors[1] = colors[0];
 	colors[2] = colors[0];
 	colors[3] = colors[0];
-
 	colors[4] = colors[0];
 	colors[5] = colors[0];
-	colors[6] = colors[0];
-	colors[7] = colors[0];
 
 	//glBufferData( GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW );
 	glBufferData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors), NULL, GL_STATIC_DRAW);
@@ -51,30 +49,42 @@ void
 init(void)
 {
 	// Specifiy the vertices for a triangle
-	float unit = 1.0 / 5;
+	float unit = 1.0 / 40;
+	spaceBuffer = unit * 2;
 
 	vec3 vertices[] = {
-		vec3(unit, unit, 0.0),
+		vec3(unit, unit, 0.0),	
 		vec3(unit, -unit, 0.0),
 		vec3(-unit, unit, 0.0),
 		vec3(-unit, unit, 0.0),
 		vec3(-unit, -unit, 0.0),
 		vec3(unit, -unit, 0.0),
+		vec3(unit/2, unit, 0.0),
+		vec3(unit/2, -unit, 0.0),
+		vec3(-unit/2, unit, 0.0),
+		vec3(-unit/2, unit, 0.0),
+		vec3(-unit/2, -unit, 0.0)
 	};
 
 	// Select an arbitrary initial point inside of the triangle
 	points[0] = vec3(0.0, 0.0, 0.0);
 
 	// compute and store NumPoints - 1 new points
-	points[0] = vertices[0];
-	points[1] = vertices[1];
-	points[2] = vertices[2];
-	points[3] = vertices[3];
+	points[0] = vertices[0] + vec3(0.0, 0.5, 0.0);
+	points[1] = vertices[1] + vec3(0.0, 0.5, 0.0);
+	points[2] = vertices[2] + vec3(0.0, 0.5, 0.0);
 
-	points[4] = vertices[0] + vec3(0.0, 0.5, 0.0);
-	points[5] = vertices[1] + vec3(0.0, 0.5, 0.0);
-	points[6] = vertices[2] + vec3(0.0, 0.5, 0.0);
-	points[7] = vertices[3] + vec3(0.0, 0.5, 0.0);
+	points[3] = vertices[3] + vec3(0.0, 0.5, 0.0);
+	points[4] = vertices[4] + vec3(0.0, 0.5, 0.0);
+	points[5] = vertices[5] + vec3(0.0, 0.5, 0.0);
+
+	points[6] = vertices[6] + vec3(0.0, 0.5, 0.0);
+	points[7] = vertices[7] + vec3(0.0, 0.5, 0.0);
+	points[8] = vertices[8] + vec3(0.0, 0.5, 0.0);
+
+	points[9] = vertices[9] + vec3(0.0, 0.5, 0.0);
+	points[10] = vertices[10] + vec3(0.0, 0.5, 0.0);
+	points[11] = vertices[11] + vec3(0.0, 0.5, 0.0);
 
 	// Create a vertex array object
 	GLuint vao;
@@ -94,12 +104,12 @@ init(void)
 	// Initialize the vertex position attribute from the vertex shader
 	GLuint loc = glGetAttribLocation(program, "vPosition");
 	glEnableVertexAttribArray(loc);
-	glVertexAttribPointer(loc, 6, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 	// Initialize the vertex color attribute from the vertex shader
 	GLuint loc1 = glGetAttribLocation(program, "vColor");
 	glEnableVertexAttribArray(loc1);
-	glVertexAttribPointer(loc1, 6, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
+	glVertexAttribPointer(loc1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
 
 	glClearColor(0.5, 0.5, 0.5, 1.0); // gray background
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -112,44 +122,127 @@ once it is declared as the display function. The application should not
 call it directly.
 */
 
-void addTriangle(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
+void addHorizontalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
 	glUniform1f(xOffsetParam, x);
 	glUniform1f(yOffsetParam, y);
 	glUniform1i(indexUniform, colorAltIndex);
 	if (fillMode) {
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 3, 3);
 	}
 	else {
 		glDrawArrays(GL_LINE_LOOP, 0, 3);
 	}
 }
 
-float generateTrianglesConsecutively(float startingXPoint, float startingYPoint, int number, char direction, bool positive) {
+void addVerticalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
+	glUniform1f(xOffsetParam, x);
+	glUniform1f(yOffsetParam, y);
+	glUniform1i(indexUniform, colorAltIndex);
+	if (fillMode) {
+		glDrawArrays(GL_TRIANGLES, 4, 3);
+		glDrawArrays(GL_TRIANGLES, 8, 3);
+	}
+	else {
+		glDrawArrays(GL_LINE_LOOP, 0, 3);
+	}
+}
+
+float generateHorizontalSquare(float startingXPoint, float startingYPoint, int number, DIRECTION direction, SIGN sign) {
 	GLint xOffsetParam;
 	GLint yOffsetParam;
 	GLint indexUniform;
 	xOffsetParam = glGetUniformLocation(program, "xOffset");
 	yOffsetParam = glGetUniformLocation(program, "yOffset");
 	indexUniform = glGetUniformLocation(program, "colorIndex");
-	float directionalBuffer = positive ? spaceBuffer : -spaceBuffer;
+	float directionalBuffer = sign == Positive ? spaceBuffer : -spaceBuffer;
 
-	startingXPoint += directionalBuffer;
-	startingYPoint += directionalBuffer;
+	if (direction == X) {
+		startingXPoint += directionalBuffer * number;
+	} else if (direction == Y) {
+		startingYPoint += directionalBuffer * number;
+	}
 
 	GLuint loc1 = glGetAttribLocation(program, "vColor");
 	glEnableVertexAttribArray(loc1);
-	glVertexAttribPointer(loc1, 6, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
+	glVertexAttribPointer(loc1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
 
 	setupColor(colorOptions[0]);
-	addTriangle(startingXPoint, startingYPoint, xOffsetParam, yOffsetParam, indexUniform);
-	return direction == 'x' ? startingXPoint : startingYPoint;
+	addHorizontalSquare(startingXPoint, startingYPoint, xOffsetParam, yOffsetParam, indexUniform);
+	return direction == X ? startingXPoint : startingYPoint;
+}
+
+float generateVerticalSquare(float startingXPoint, float startingYPoint, int number, DIRECTION direction, SIGN sign) {
+	GLint xOffsetParam;
+	GLint yOffsetParam;
+	GLint indexUniform;
+	xOffsetParam = glGetUniformLocation(program, "xOffset");
+	yOffsetParam = glGetUniformLocation(program, "yOffset");
+	indexUniform = glGetUniformLocation(program, "colorIndex");
+	float directionalBuffer = sign == Positive ? spaceBuffer : -spaceBuffer;
+
+	if (direction == X) {
+		startingXPoint += directionalBuffer * number;
+	}
+	else if (direction == Y) {
+		startingYPoint += directionalBuffer * number;
+	}
+
+	GLuint loc1 = glGetAttribLocation(program, "vColor");
+	glEnableVertexAttribArray(loc1);
+	glVertexAttribPointer(loc1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
+
+	setupColor(colorOptions[0]);
+	addVerticalSquare(startingXPoint, startingYPoint, xOffsetParam, yOffsetParam, indexUniform);
+	return direction == X ? startingXPoint : startingYPoint;
+}
+
+void generateLetterO() {
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 0, Y, Positive);
+	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Positive);
+	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Positive);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
+	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Negative);
+	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Negative);
+	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Negative);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Positive);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Positive);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Positive);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Positive);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Positive);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Positive);
+}
+
+void generateLetterI() {
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 0, Y, Positive);
+	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Positive);
+	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Positive);
+	startingXPoint -= spaceBuffer;
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
+	//startingXPoint -= spaceBuffer * (1.5);
+	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Negative);
+	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Negative);
+	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Negative);
 }
 
 void
 display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);				// clear the window
-	generateTrianglesConsecutively(startingXPoint, startingYPoint, 0, 'y', true);
+	generateLetterO();
+
+	startingXPoint += spaceBuffer * 5;
+
+	generateLetterI();
 	colorIndex = 0;								// need to reset otherwise colors keep changing
 	colorAltIndex = colorAltIndex == -1 ? -1 : 0;
 	glFlush();									// flush the buffer
