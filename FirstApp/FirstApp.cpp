@@ -24,6 +24,7 @@ vec3 colorOptions[] = {
 
 enum DIRECTION { X, Y };
 enum SIGN {Positive, Negative};
+enum SQUARE_TYPE {NORMAL, DIAGONAL};
 
 //----------------------------------------------------------------------------
 /* This function initializes an array of 3d vectors
@@ -45,12 +46,18 @@ void setupColor(vec3 color) {
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(colors), colors);
 }
 
+void resetStartingPoint() {
+	startingXPoint = spaceBuffer * -15;
+	startingYPoint = 0.0;
+}
+
 void
 init(void)
 {
 	// Specifiy the vertices for a triangle
 	float unit = 1.0 / 40;
 	spaceBuffer = unit * 2;
+	resetStartingPoint();
 
 	vec3 vertices[] = {
 		vec3(unit, unit, 0.0),	
@@ -116,13 +123,7 @@ init(void)
 	glShadeModel(GL_FLAT);
 }
 
-//----------------------------------------------------------------------------
-/* This function handles the display and it is automatically called by GLUT
-once it is declared as the display function. The application should not
-call it directly.
-*/
-
-void addHorizontalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
+void addNormalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
 	glUniform1f(xOffsetParam, x);
 	glUniform1f(yOffsetParam, y);
 	glUniform1i(indexUniform, colorAltIndex);
@@ -135,20 +136,31 @@ void addHorizontalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetPara
 	}
 }
 
-void addVerticalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
+void addDiagonalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
 	glUniform1f(xOffsetParam, x);
 	glUniform1f(yOffsetParam, y);
 	glUniform1i(indexUniform, colorAltIndex);
 	if (fillMode) {
-		glDrawArrays(GL_TRIANGLES, 4, 3);
-		glDrawArrays(GL_TRIANGLES, 8, 3);
+		glPushMatrix();
+		glRotatef(45, startingXPoint, startingYPoint, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 3, 3);
+		glPopMatrix();
 	}
 	else {
 		glDrawArrays(GL_LINE_LOOP, 0, 3);
 	}
 }
 
-float generateHorizontalSquare(float startingXPoint, float startingYPoint, int number, DIRECTION direction, SIGN sign) {
+void addSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform, SQUARE_TYPE type) {
+	if (type == NORMAL) {
+		addNormalSquare(startingXPoint, startingYPoint, xOffsetParam, yOffsetParam, indexUniform);
+	} else if (type == DIAGONAL) {
+		addDiagonalSquare(startingXPoint, startingYPoint, xOffsetParam, yOffsetParam, indexUniform);
+	}
+}
+
+float generateSquare(int number, DIRECTION direction, SIGN sign, SQUARE_TYPE type) {
 	GLint xOffsetParam;
 	GLint yOffsetParam;
 	GLint indexUniform;
@@ -168,81 +180,132 @@ float generateHorizontalSquare(float startingXPoint, float startingYPoint, int n
 	glVertexAttribPointer(loc1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
 
 	setupColor(colorOptions[0]);
-	addHorizontalSquare(startingXPoint, startingYPoint, xOffsetParam, yOffsetParam, indexUniform);
-	return direction == X ? startingXPoint : startingYPoint;
-}
-
-float generateVerticalSquare(float startingXPoint, float startingYPoint, int number, DIRECTION direction, SIGN sign) {
-	GLint xOffsetParam;
-	GLint yOffsetParam;
-	GLint indexUniform;
-	xOffsetParam = glGetUniformLocation(program, "xOffset");
-	yOffsetParam = glGetUniformLocation(program, "yOffset");
-	indexUniform = glGetUniformLocation(program, "colorIndex");
-	float directionalBuffer = sign == Positive ? spaceBuffer : -spaceBuffer;
-
-	if (direction == X) {
-		startingXPoint += directionalBuffer * number;
-	}
-	else if (direction == Y) {
-		startingYPoint += directionalBuffer * number;
-	}
-
-	GLuint loc1 = glGetAttribLocation(program, "vColor");
-	glEnableVertexAttribArray(loc1);
-	glVertexAttribPointer(loc1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
-
-	setupColor(colorOptions[0]);
-	addVerticalSquare(startingXPoint, startingYPoint, xOffsetParam, yOffsetParam, indexUniform);
+	addSquare(startingXPoint, startingYPoint, xOffsetParam, yOffsetParam, indexUniform, type);
 	return direction == X ? startingXPoint : startingYPoint;
 }
 
 void generateLetterO() {
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 0, Y, Positive);
-	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Positive);
-	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Positive);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
-	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Negative);
-	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Negative);
-	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Negative);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Positive);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Positive);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Positive);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Positive);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Positive);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Positive);
+	startingYPoint = generateSquare(0, Y, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
+	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
+	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
+	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
+	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
+	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
 }
 
 void generateLetterI() {
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 0, Y, Positive);
-	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Positive);
-	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Positive);
+	startingYPoint = generateSquare(0, Y, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
 	startingXPoint -= spaceBuffer;
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, Y, Negative);
-	//startingXPoint -= spaceBuffer * (1.5);
-	startingYPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Negative);
-	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Negative);
-	startingXPoint = generateHorizontalSquare(startingXPoint, startingYPoint, 1, X, Negative);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingXPoint -= spaceBuffer * (2);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+ 	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
 }
 
+void generateLetterS() {
+	startingYPoint = generateSquare(0, Y, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Negative, NORMAL);
+}
+
+void generateLetterZ() {
+	startingYPoint = generateSquare(0, Y, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, DIAGONAL);
+}
+
+void generateLetterL() {
+	startingYPoint = generateSquare(0, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+}
+
+void generateLetterJ() {
+	startingYPoint = generateSquare(0, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Negative, NORMAL);
+	startingXPoint = generateSquare(1, X, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
+	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
+}
+
+void generateLetterT() {
+	startingYPoint = generateSquare(0, Y, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingXPoint = generateSquare(1, X, Positive, NORMAL);
+	startingXPoint -= spaceBuffer;
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
+}
+
+//----------------------------------------------------------------------------
+/* This function handles the display and it is automatically called by GLUT
+once it is declared as the display function. The application should not
+call it directly.
+*/
 void
 display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);				// clear the window
-	generateLetterO();
+	resetStartingPoint();
+	//generateLetterO();
+	//generateLetterI();
+	//generateLetterS();
+	//generateLetterZ();
+	//generateLetterL();
+	//generateLetterJ();
+	generateLetterT();
 
-	startingXPoint += spaceBuffer * 5;
-
-	generateLetterI();
 	colorIndex = 0;								// need to reset otherwise colors keep changing
 	colorAltIndex = colorAltIndex == -1 ? -1 : 0;
 	glFlush();									// flush the buffer
