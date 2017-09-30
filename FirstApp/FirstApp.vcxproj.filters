@@ -27,12 +27,18 @@
     <ClInclude Include="CheckError.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Letters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InitShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FirstApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Letters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -12,6 +12,7 @@ vec3 colors[NumPoints];
 int colorIndex = 0;
 bool fillMode = true;
 GLint colorAltIndex = -1;
+char choice;
 
 vec3 colorOptions[] = {
 	vec3(1.0, 0.0, 0.0),
@@ -288,6 +289,32 @@ void generateLetterT() {
 	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
 }
 
+void generateLetterViaChoice() {
+	switch (choice) {
+	case 'o':
+		generateLetterO();
+		break;
+	case 'i':
+		generateLetterI();
+		break;
+	case 's':
+		generateLetterS();
+		break;
+	case 'z':
+		generateLetterZ();
+		break;
+	case 'l':
+		generateLetterL();
+		break;
+	case 'j':
+		generateLetterJ();
+		break;
+	case 't':
+		generateLetterT();
+		break;
+	}
+}
+
 //----------------------------------------------------------------------------
 /* This function handles the display and it is automatically called by GLUT
 once it is declared as the display function. The application should not
@@ -298,14 +325,7 @@ display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);				// clear the window
 	resetStartingPoint();
-	//generateLetterO();
-	//generateLetterI();
-	//generateLetterS();
-	//generateLetterZ();
-	//generateLetterL();
-	//generateLetterJ();
-	generateLetterT();
-
+	generateLetterViaChoice();
 	colorIndex = 0;								// need to reset otherwise colors keep changing
 	colorAltIndex = colorAltIndex == -1 ? -1 : 0;
 	glFlush();									// flush the buffer
@@ -324,23 +344,38 @@ keyboard(unsigned char key, int x, int y)
 		case 033:				// escape key
 			exit(EXIT_SUCCESS);	// terminates the program
 			break;
-		case 'f':
-			fillMode = true;
+		case 'o':
+			choice = 'o';
 			init();
 			glutPostRedisplay();
 			break;
-		case 'w':
-			fillMode = false;
+		case 'i':
+			choice = 'i';
 			init();
 			glutPostRedisplay();
 			break;
-		case 'u':
-			colorAltIndex = 0;
+		case 's':
+			choice = 's';
 			init();
 			glutPostRedisplay();
 			break;
-		case 'v':
-			colorAltIndex = -1;
+		case 'z':
+			choice = 'z';
+			init();
+			glutPostRedisplay();
+			break;
+		case 'l':
+			choice = 'l';
+			init();
+			glutPostRedisplay();
+			break;
+		case 'j':
+			choice = 'j';
+			init();
+			glutPostRedisplay();
+			break;
+		case 't':
+			choice = 't';
 			init();
 			glutPostRedisplay();
 			break;

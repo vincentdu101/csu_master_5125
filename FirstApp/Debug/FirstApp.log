@@ -7,6 +7,6 @@ c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(723): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(726): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(743): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(58): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(59): warning C4305: 'initializing': truncation from 'double' to 'float'
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\FirstAppGLEW\Debug\FirstApp.exe
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\FirstAppGLEW\Debug\FirstApp.pdb (Partial PDB)

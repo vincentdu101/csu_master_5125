@@ -80,12 +80,14 @@
   <ItemGroup>
     <ClInclude Include="Angel.h" />
     <ClInclude Include="CheckError.h" />
+    <ClInclude Include="Letters.h" />
     <ClInclude Include="mat.h" />
     <ClInclude Include="vec.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FirstApp.cpp" />
     <ClCompile Include="InitShader.cpp" />
+    <ClCompile Include="Letters.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="simpleShader.frag" />
