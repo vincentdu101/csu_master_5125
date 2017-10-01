@@ -16,6 +16,22 @@ c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(723): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(726): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(743): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(10): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(131): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(132): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(153): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(154): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(155): warning C4244: '=': conversion from 'GLfloat' to 'int', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(171): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(172): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(173): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(191): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(192): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(193): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(210): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(216): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(247): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
   Generating Code...
+  LINK : C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\FirstAppGLEW\Debug\FirstApp.exe not found or not built by the last incremental link; performing full link
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\FirstAppGLEW\Debug\FirstApp.exe
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\FirstAppGLEW\Debug\FirstApp.pdb (Partial PDB)
