@@ -2,17 +2,27 @@
 
 #include "Angel.h"
 
+enum DIRECTION { X, Y };
+enum SIGN { Positive, Negative };
+enum SQUARE_TYPE { NORMAL, DIAGONAL };
+enum MOVE_STATE {MOVE, WAIT, PLACE};
+
 const int NumPoints = 6;
 GLuint program = 0;
 float spaceBuffer;
 float startingXPoint = 0.0;
 float startingYPoint = 0.0;
+float xOffset = 0.0;
+float yOffset = 0.0;
 vec3 points[NumPoints];
 vec3 colors[NumPoints];
 int colorIndex = 0;
 bool fillMode = true;
 GLint colorAltIndex = -1;
 char choice;
+GLfloat width = 1536;
+GLfloat height = 1024;
+MOVE_STATE inputState;
 
 vec3 colorOptions[] = {
 	vec3(1.0, 0.0, 0.0),
@@ -22,10 +32,6 @@ vec3 colorOptions[] = {
 	vec3(0.0, 1.0, 1.0),
 	vec3(1.0, 1.0, 0.0)
 };
-
-enum DIRECTION { X, Y };
-enum SIGN {Positive, Negative};
-enum SQUARE_TYPE {NORMAL, DIAGONAL};
 
 //----------------------------------------------------------------------------
 /* This function initializes an array of 3d vectors
@@ -171,9 +177,9 @@ float generateSquare(int number, DIRECTION direction, SIGN sign, SQUARE_TYPE typ
 	float directionalBuffer = sign == Positive ? spaceBuffer : -spaceBuffer;
 
 	if (direction == X) {
-		startingXPoint += directionalBuffer * number;
+		startingXPoint += (directionalBuffer * number) + xOffset;
 	} else if (direction == Y) {
-		startingYPoint += directionalBuffer * number;
+		startingYPoint += (directionalBuffer * number) + yOffset;
 	}
 
 	GLuint loc1 = glGetAttribLocation(program, "vColor");
@@ -315,6 +321,53 @@ void generateLetterViaChoice() {
 	}
 }
 
+void recalculateDimensions() {
+	width = glutGet(GLUT_WINDOW_WIDTH);
+	height = glutGet(GLUT_WINDOW_HEIGHT);
+}
+
+void mouse(GLint button, GLint state, GLint x, GLint y) {
+	recalculateDimensions();
+	y = height - y;
+	GLfloat xWorld = (GLfloat)x / width * 2 - 1;
+	GLfloat yWorld = (GLfloat)y / height * 2 - 1;
+
+	if (state == GLUT_DOWN && inputState == MOVE) {
+		xOffset = xWorld;
+		yOffset = yWorld;
+		inputState = PLACE;
+		printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
+		glutPostRedisplay();
+	}
+}
+
+void mouseMove(GLint x, GLint y) {
+	if (inputState == MOVE) {
+		recalculateDimensions();
+		y = height - y;
+		GLfloat xWorld = (GLfloat)x / width * 2 - 1;
+		GLfloat yWorld = (GLfloat)y / height * 2 - 1;
+		xOffset = xWorld;
+		yOffset = yWorld;
+		inputState = PLACE;
+		printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
+		glutPostRedisplay();
+	}
+}
+
+void initiate(int x, int y) {
+	init();
+	recalculateDimensions();
+	y = height - y;
+	GLfloat xWorld = (GLfloat)x / width * 2 - 1;
+	GLfloat yWorld = (GLfloat)y / height * 2 - 1;
+	xOffset = xWorld;
+	yOffset = yWorld;
+	inputState = MOVE;
+	printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
+	glutPostRedisplay();
+}
+
 //----------------------------------------------------------------------------
 /* This function handles the display and it is automatically called by GLUT
 once it is declared as the display function. The application should not
@@ -336,7 +389,6 @@ display(void)
 declared as the keyboard function. The application should not call it
 directly.
 */
-
 void
 keyboard(unsigned char key, int x, int y)
 {
@@ -346,38 +398,31 @@ keyboard(unsigned char key, int x, int y)
 			break;
 		case 'o':
 			choice = 'o';
-			init();
-			glutPostRedisplay();
+			initiate(x, y);
 			break;
 		case 'i':
 			choice = 'i';
-			init();
-			glutPostRedisplay();
+			initiate(x, y);
 			break;
 		case 's':
 			choice = 's';
-			init();
-			glutPostRedisplay();
+			initiate(x, y);
 			break;
 		case 'z':
 			choice = 'z';
-			init();
-			glutPostRedisplay();
+			initiate(x, y);
 			break;
 		case 'l':
 			choice = 'l';
-			init();
-			glutPostRedisplay();
+			initiate(x, y);
 			break;
 		case 'j':
 			choice = 'j';
-			init();
-			glutPostRedisplay();
+			initiate(x, y);
 			break;
 		case 't':
 			choice = 't';
-			init();
-			glutPostRedisplay();
+			initiate(x, y);
 			break;
 		default:
 			break;
@@ -397,7 +442,7 @@ main(int argc, char **argv)
 	// Initialize the display mode to a buffer with Red, Green, Blue and Alpha channels
 	glutInitDisplayMode(GLUT_RGBA);
 	// Set the window size
-	glutInitWindowSize(1536, 1024);
+	glutInitWindowSize(width, height);
 	// Here you set the OpenGL version
 	glutInitContextVersion(3, 2);
 	//Use only one of the next two lines
@@ -415,6 +460,9 @@ main(int argc, char **argv)
 	glutDisplayFunc(display);
 	// provide the functions that handles the keyboard
 	glutKeyboardFunc(keyboard);
+
+	glutMouseFunc(mouse);
+	glutPassiveMotionFunc(mouseMove);
 
 	// Wait for input from the user (the only meaningful input is the key escape)
 	glutMainLoop();
