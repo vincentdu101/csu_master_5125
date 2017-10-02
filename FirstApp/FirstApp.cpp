@@ -12,6 +12,7 @@ GLuint program = 0;
 float spaceBuffer;
 float startingXPoint = 0.0;
 float startingYPoint = 0.0;
+float unit = 1.0 / 40;
 float xOffset = 0.0;
 float yOffset = 0.0;
 vec3 points[NumPoints];
@@ -62,7 +63,6 @@ void
 init(void)
 {
 	// Specifiy the vertices for a triangle
-	float unit = 1.0 / 40;
 	spaceBuffer = unit * 2;
 	resetStartingPoint();
 
@@ -131,8 +131,9 @@ init(void)
 }
 
 void addNormalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
-	glUniform1f(xOffsetParam, x);
-	glUniform1f(yOffsetParam, y);
+	float spaceToMouseDeduction = (5 * unit);
+	glUniform1f(xOffsetParam, x + xOffset - spaceToMouseDeduction);
+	glUniform1f(yOffsetParam, y + yOffset - spaceToMouseDeduction);
 	glUniform1i(indexUniform, colorAltIndex);
 	if (fillMode) {
 		glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -144,8 +145,9 @@ void addNormalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, G
 }
 
 void addDiagonalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
-	glUniform1f(xOffsetParam, x);
-	glUniform1f(yOffsetParam, y);
+	float spaceToMouseDeduction = (5 * unit);
+	glUniform1f(xOffsetParam, x + xOffset - spaceToMouseDeduction);
+	glUniform1f(yOffsetParam, y + yOffset - spaceToMouseDeduction);
 	glUniform1i(indexUniform, colorAltIndex);
 	if (fillMode) {
 		glPushMatrix();
@@ -177,9 +179,9 @@ float generateSquare(int number, DIRECTION direction, SIGN sign, SQUARE_TYPE typ
 	float directionalBuffer = sign == Positive ? spaceBuffer : -spaceBuffer;
 
 	if (direction == X) {
-		startingXPoint += (directionalBuffer * number) + xOffset;
+		startingXPoint += (directionalBuffer * number);
 	} else if (direction == Y) {
-		startingYPoint += (directionalBuffer * number) + yOffset;
+		startingYPoint += (directionalBuffer * number);
 	}
 
 	GLuint loc1 = glGetAttribLocation(program, "vColor");
@@ -349,14 +351,12 @@ void mouseMove(GLint x, GLint y) {
 		GLfloat yWorld = (GLfloat)y / height * 2 - 1;
 		xOffset = xWorld;
 		yOffset = yWorld;
-		inputState = PLACE;
 		printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
 		glutPostRedisplay();
 	}
 }
 
 void initiate(int x, int y) {
-	init();
 	recalculateDimensions();
 	y = height - y;
 	GLfloat xWorld = (GLfloat)x / width * 2 - 1;
@@ -365,6 +365,8 @@ void initiate(int x, int y) {
 	yOffset = yWorld;
 	inputState = MOVE;
 	printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
+//	resetStartingPoint();
+//	generateLetterViaChoice();
 	glutPostRedisplay();
 }
 
@@ -377,11 +379,19 @@ void
 display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);				// clear the window
-	resetStartingPoint();
-	generateLetterViaChoice();
 	colorIndex = 0;								// need to reset otherwise colors keep changing
 	colorAltIndex = colorAltIndex == -1 ? -1 : 0;
-	glFlush();									// flush the buffer
+	switch (inputState) {
+		case WAIT:
+			break;
+		case MOVE:
+		case PLACE:
+			init();
+			resetStartingPoint();
+			generateLetterViaChoice();
+			break;
+	}
+	glutSwapBuffers();
 }
 
 //----------------------------------------------------------------------------
@@ -440,7 +450,7 @@ main(int argc, char **argv)
 	// Initialize GLUT
 	glutInit(&argc, argv);
 	// Initialize the display mode to a buffer with Red, Green, Blue and Alpha channels
-	glutInitDisplayMode(GLUT_RGBA);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	// Set the window size
 	glutInitWindowSize(width, height);
 	// Here you set the OpenGL version

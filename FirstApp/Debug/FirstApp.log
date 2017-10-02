@@ -7,12 +7,12 @@ c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(723): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(726): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(743): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(65): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(325): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(326): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(331): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(347): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(15): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(327): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(328): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(333): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(349): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(361): warning C4244: '=': conversion from 'GLfloat' to 'int', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(445): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(455): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\FirstAppGLEW\Debug\FirstApp.exe
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\FirstAppGLEW\Debug\FirstApp.pdb (Partial PDB)
