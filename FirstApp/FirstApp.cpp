@@ -24,6 +24,9 @@ char choice;
 GLfloat width = 1536;
 GLfloat height = 1024;
 MOVE_STATE inputState;
+GLfloat radians = 0.001;
+GLfloat rotate = 0.0f;
+bool rotateNow = false;
 
 vec3 colorOptions[] = {
 	vec3(1.0, 0.0, 0.0),
@@ -130,12 +133,24 @@ init(void)
 	glShadeModel(GL_FLAT);
 }
 
+void rotateTriangleAsNeeded() {
+	if (inputState == MOVE && rotateNow) {
+		rotate += 0.2f;
+	}
+	else {
+		rotate = 0.0f;
+	}
+}
+
 void addNormalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
-	float spaceToMouseDeduction = (5 * unit);
-	glUniform1f(xOffsetParam, x + xOffset - spaceToMouseDeduction);
-	glUniform1f(yOffsetParam, y + yOffset - spaceToMouseDeduction);
-	glUniform1i(indexUniform, colorAltIndex);
+	//rotateTriangleAsNeeded();
+	glUniform1f(xOffsetParam, x + xOffset);
+	glUniform1f(yOffsetParam, y + yOffset);
+	glUniform1i(indexUniform, colorIndex);
 	if (fillMode) {
+		glMatrixMode(GL_MODELVIEW);
+		glRotatef(rotate, 0.0f, 0.0f, 1.0f);
+		glLoadIdentity();
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDrawArrays(GL_TRIANGLES, 3, 3);
 	}
@@ -145,10 +160,9 @@ void addNormalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, G
 }
 
 void addDiagonalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
-	float spaceToMouseDeduction = (5 * unit);
-	glUniform1f(xOffsetParam, x + xOffset - spaceToMouseDeduction);
-	glUniform1f(yOffsetParam, y + yOffset - spaceToMouseDeduction);
-	glUniform1i(indexUniform, colorAltIndex);
+	glUniform1f(xOffsetParam, x + xOffset);
+	glUniform1f(yOffsetParam, y + yOffset);
+	glUniform1i(indexUniform, colorIndex);
 	if (fillMode) {
 		glPushMatrix();
 		glRotatef(45, startingXPoint, startingYPoint, 0);
@@ -338,7 +352,7 @@ void mouse(GLint button, GLint state, GLint x, GLint y) {
 		xOffset = xWorld;
 		yOffset = yWorld;
 		inputState = PLACE;
-		printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
+		//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
 		glutPostRedisplay();
 	}
 }
@@ -351,7 +365,7 @@ void mouseMove(GLint x, GLint y) {
 		GLfloat yWorld = (GLfloat)y / height * 2 - 1;
 		xOffset = xWorld;
 		yOffset = yWorld;
-		printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
+		//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
 		glutPostRedisplay();
 	}
 }
@@ -364,10 +378,36 @@ void initiate(int x, int y) {
 	xOffset = xWorld;
 	yOffset = yWorld;
 	inputState = MOVE;
-	printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
+	//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
 //	resetStartingPoint();
 //	generateLetterViaChoice();
 	glutPostRedisplay();
+}
+
+void timer(int v) {
+	//if (rotateNow) {
+		rotate += 1.0;
+		if (rotate > 360.0) {
+			rotate -= 360.0;
+		}
+		glutPostRedisplay();
+	//}
+	//printf("%f", rotate);
+	glutTimerFunc(1000 / 60, timer, v);
+}
+
+void handleMenu(int colorId) {
+	printf("%i", colorId);
+	colorIndex = colorId;
+}
+
+void createMenu() {
+	int menu_id = glutCreateMenu(handleMenu);
+	glutAddMenuEntry("Yellow", 0);
+	glutAddMenuEntry("Pink", 1);
+	glutAddMenuEntry("Red", 2);
+	glutAddMenuEntry("White", 3);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
 //----------------------------------------------------------------------------
@@ -379,8 +419,6 @@ void
 display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);				// clear the window
-	colorIndex = 0;								// need to reset otherwise colors keep changing
-	colorAltIndex = colorAltIndex == -1 ? -1 : 0;
 	switch (inputState) {
 		case WAIT:
 			break;
@@ -391,6 +429,7 @@ display(void)
 			generateLetterViaChoice();
 			break;
 	}
+	glFlush();
 	glutSwapBuffers();
 }
 
@@ -434,7 +473,10 @@ keyboard(unsigned char key, int x, int y)
 			choice = 't';
 			initiate(x, y);
 			break;
+		case 'p':
+			rotateNow = true;
 		default:
+			rotateNow = false;
 			break;
 	}
 }
@@ -471,8 +513,10 @@ main(int argc, char **argv)
 	// provide the functions that handles the keyboard
 	glutKeyboardFunc(keyboard);
 
+	glutTimerFunc(100, timer, 0);
 	glutMouseFunc(mouse);
 	glutPassiveMotionFunc(mouseMove);
+	createMenu();
 
 	// Wait for input from the user (the only meaningful input is the key escape)
 	glutMainLoop();
