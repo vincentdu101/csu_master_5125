@@ -27,6 +27,9 @@ MOVE_STATE inputState;
 GLfloat radians = 0.001;
 GLfloat rotate = 0.0f;
 bool rotateNow = false;
+int xAxis = 0;
+GLfloat theta[3] = { 0.0, 0.0, 0.0 };
+vec3 vertices[];
 
 vec3 colorOptions[] = {
 	vec3(1.0, 0.0, 0.0),
@@ -62,25 +65,21 @@ void resetStartingPoint() {
 	startingYPoint = 0.0;
 }
 
-void
-init(void)
-{
-	// Specifiy the vertices for a triangle
+void initVerticesAndSpaceBuffer() {
 	spaceBuffer = unit * 2;
-	resetStartingPoint();
 
 	vec3 vertices[] = {
-		vec3(unit, unit, 0.0),	
+		vec3(unit, unit, 0.0),
 		vec3(unit, -unit, 0.0),
 		vec3(-unit, unit, 0.0),
 		vec3(-unit, unit, 0.0),
 		vec3(-unit, -unit, 0.0),
 		vec3(unit, -unit, 0.0),
-		vec3(unit/2, unit, 0.0),
-		vec3(unit/2, -unit, 0.0),
-		vec3(-unit/2, unit, 0.0),
-		vec3(-unit/2, unit, 0.0),
-		vec3(-unit/2, -unit, 0.0)
+		vec3(unit / 2, unit, 0.0),
+		vec3(unit / 2, -unit, 0.0),
+		vec3(-unit / 2, unit, 0.0),
+		vec3(-unit / 2, unit, 0.0),
+		vec3(-unit / 2, -unit, 0.0)
 	};
 
 	// Select an arbitrary initial point inside of the triangle
@@ -102,6 +101,14 @@ init(void)
 	points[9] = vertices[9] + vec3(0.0, 0.5, 0.0);
 	points[10] = vertices[10] + vec3(0.0, 0.5, 0.0);
 	points[11] = vertices[11] + vec3(0.0, 0.5, 0.0);
+}
+
+void
+init(void)
+{
+	// Specifiy the vertices for a triangle
+	initVerticesAndSpaceBuffer();
+	resetStartingPoint();
 
 	// Create a vertex array object
 	GLuint vao;
@@ -134,23 +141,27 @@ init(void)
 }
 
 void rotateTriangleAsNeeded() {
-	if (inputState == MOVE && rotateNow) {
-		rotate += 0.2f;
+	//if (inputState == MOVE && rotateNow) {
+	theta[2] += 0.01f;
+	if (theta[2] > 360.0) {
+		theta[2] = 0.0f;
 	}
-	else {
-		rotate = 0.0f;
-	}
+	//}
+	//else {
+		//theta[xAxis] = 0.0f;
+	//}
+	printf("%f", theta[2]);
+	GLint thetaUni = glGetUniformLocation(program, "theta");
+	glUniform3fv(thetaUni, 1, theta);
 }
 
 void addNormalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
-	//rotateTriangleAsNeeded();
+	rotateTriangleAsNeeded();
 	glUniform1f(xOffsetParam, x + xOffset);
 	glUniform1f(yOffsetParam, y + yOffset);
 	glUniform1i(indexUniform, colorIndex);
+
 	if (fillMode) {
-		glMatrixMode(GL_MODELVIEW);
-		glRotatef(rotate, 0.0f, 0.0f, 1.0f);
-		glLoadIdentity();
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDrawArrays(GL_TRIANGLES, 3, 3);
 	}
@@ -379,25 +390,10 @@ void initiate(int x, int y) {
 	yOffset = yWorld;
 	inputState = MOVE;
 	//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
-//	resetStartingPoint();
-//	generateLetterViaChoice();
 	glutPostRedisplay();
 }
 
-void timer(int v) {
-	//if (rotateNow) {
-		rotate += 1.0;
-		if (rotate > 360.0) {
-			rotate -= 360.0;
-		}
-		glutPostRedisplay();
-	//}
-	//printf("%f", rotate);
-	glutTimerFunc(1000 / 60, timer, v);
-}
-
 void handleMenu(int colorId) {
-	printf("%i", colorId);
 	colorIndex = colorId;
 }
 
@@ -481,6 +477,19 @@ keyboard(unsigned char key, int x, int y)
 	}
 }
 
+void handleSpecialKeypress(int key, int x, int y) {
+	switch (key) {
+		case GLUT_KEY_UP:
+			unit *= 1.1;
+			glutPostRedisplay();
+			break;
+		case GLUT_KEY_DOWN:
+			unit /= 1.1;
+			glutPostRedisplay();
+			break;
+	}
+}
+
 //----------------------------------------------------------------------------
 /* This is the main function that calls all the functions to initialize
 and setup the OpenGL environment through GLUT and GLEW.
@@ -512,10 +521,9 @@ main(int argc, char **argv)
 	glutDisplayFunc(display);
 	// provide the functions that handles the keyboard
 	glutKeyboardFunc(keyboard);
-
-	glutTimerFunc(100, timer, 0);
 	glutMouseFunc(mouse);
 	glutPassiveMotionFunc(mouseMove);
+	glutSpecialFunc(handleSpecialKeypress);
 	createMenu();
 
 	// Wait for input from the user (the only meaningful input is the key escape)
