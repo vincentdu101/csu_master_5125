@@ -15,7 +15,8 @@ float startingYPoint = 0.0;
 float unit = 1.0 / 40;
 float xOffset = 0.0;
 float yOffset = 0.0;
-vec3 points[NumPoints];
+float scale = 1.0;
+vec4 points[NumPoints];
 vec3 colors[NumPoints];
 int colorIndex = 0;
 bool fillMode = true;
@@ -25,11 +26,10 @@ GLfloat width = 1536;
 GLfloat height = 1024;
 MOVE_STATE inputState;
 GLfloat radians = 0.001;
-GLfloat rotate = 0.0f;
+float rotate = 0;
 bool rotateNow = false;
 int xAxis = 0;
-GLfloat theta[3] = { 0.0, 0.0, 0.0 };
-vec3 vertices[];
+vec4 vertices[];
 
 vec3 colorOptions[] = {
 	vec3(1.0, 0.0, 0.0),
@@ -83,24 +83,12 @@ void initVerticesAndSpaceBuffer() {
 	};
 
 	// Select an arbitrary initial point inside of the triangle
-	points[0] = vec3(0.0, 0.0, 0.0);
+	points[0] = vec4(0.0, 0.0, 0.0, 1.0);
 
 	// compute and store NumPoints - 1 new points
-	points[0] = vertices[0] + vec3(0.0, 0.5, 0.0);
-	points[1] = vertices[1] + vec3(0.0, 0.5, 0.0);
-	points[2] = vertices[2] + vec3(0.0, 0.5, 0.0);
-
-	points[3] = vertices[3] + vec3(0.0, 0.5, 0.0);
-	points[4] = vertices[4] + vec3(0.0, 0.5, 0.0);
-	points[5] = vertices[5] + vec3(0.0, 0.5, 0.0);
-
-	points[6] = vertices[6] + vec3(0.0, 0.5, 0.0);
-	points[7] = vertices[7] + vec3(0.0, 0.5, 0.0);
-	points[8] = vertices[8] + vec3(0.0, 0.5, 0.0);
-
-	points[9] = vertices[9] + vec3(0.0, 0.5, 0.0);
-	points[10] = vertices[10] + vec3(0.0, 0.5, 0.0);
-	points[11] = vertices[11] + vec3(0.0, 0.5, 0.0);
+	for (int i = 0; i < NumPoints * 2; i++) {
+		points[i] = vertices[i] + vec3(-unit, 0.0, 0.0);
+	}
 }
 
 void
@@ -128,37 +116,24 @@ init(void)
 	// Initialize the vertex position attribute from the vertex shader
 	GLuint loc = glGetAttribLocation(program, "vPosition");
 	glEnableVertexAttribArray(loc);
-	glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 	// Initialize the vertex color attribute from the vertex shader
 	GLuint loc1 = glGetAttribLocation(program, "vColor");
 	glEnableVertexAttribArray(loc1);
-	glVertexAttribPointer(loc1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
+	glVertexAttribPointer(loc1, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
 
 	glClearColor(0.5, 0.5, 0.5, 1.0); // gray background
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glShadeModel(GL_FLAT);
 }
 
-void rotateTriangleAsNeeded() {
-	//if (inputState == MOVE && rotateNow) {
-	theta[2] += 0.01f;
-	if (theta[2] > 360.0) {
-		theta[2] = 0.0f;
-	}
-	//}
-	//else {
-		//theta[xAxis] = 0.0f;
-	//}
-	printf("%f", theta[2]);
-	GLint thetaUni = glGetUniformLocation(program, "theta");
-	glUniform3fv(thetaUni, 1, theta);
-}
-
-void addNormalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
-	rotateTriangleAsNeeded();
-	glUniform1f(xOffsetParam, x + xOffset);
-	glUniform1f(yOffsetParam, y + yOffset);
+void addNormalSquare(float x, float y, GLint indexUniform) {
+	//glUniform1f(xOffsetParam, x + xOffset);
+	//glUniform1f(yOffsetParam, y + yOffset);
+	GLuint modelProgram = glGetUniformLocation(program, "ModelView");
+	mat4 modelView = Translate(x + xOffset, y + yOffset, 0.0) * RotateZ(rotate) * Scale(scale);
+	glUniformMatrix4fv(modelProgram, 1, GL_TRUE, modelView);
 	glUniform1i(indexUniform, colorIndex);
 
 	if (fillMode) {
@@ -170,36 +145,36 @@ void addNormalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, G
 	}
 }
 
-void addDiagonalSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform) {
-	glUniform1f(xOffsetParam, x + xOffset);
-	glUniform1f(yOffsetParam, y + yOffset);
+void addDiagonalSquare(float x, float y, GLint indexUniform) {
+	//glUniform1f(xOffsetParam, x + xOffset);
+	// glUniform1f(yOffsetParam, y + yOffset);
+	GLint modelProgram = glGetAttribLocation(program, "ModelView");
+	mat4 modelView = Translate(x + xOffset, y + yOffset, 0.0);
+	glUniformMatrix4fv(modelProgram, 1, GL_TRUE, modelView);
 	glUniform1i(indexUniform, colorIndex);
 	if (fillMode) {
-		glPushMatrix();
-		glRotatef(45, startingXPoint, startingYPoint, 0);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDrawArrays(GL_TRIANGLES, 3, 3);
-		glPopMatrix();
 	}
 	else {
 		glDrawArrays(GL_LINE_LOOP, 0, 3);
 	}
 }
 
-void addSquare(float x, float y, GLint xOffsetParam, GLint yOffsetParam, GLint indexUniform, SQUARE_TYPE type) {
+void addSquare(float x, float y, GLint indexUniform, SQUARE_TYPE type) {
 	if (type == NORMAL) {
-		addNormalSquare(startingXPoint, startingYPoint, xOffsetParam, yOffsetParam, indexUniform);
+		addNormalSquare(startingXPoint, startingYPoint, indexUniform);
 	} else if (type == DIAGONAL) {
-		addDiagonalSquare(startingXPoint, startingYPoint, xOffsetParam, yOffsetParam, indexUniform);
+		addDiagonalSquare(startingXPoint, startingYPoint, indexUniform);
 	}
 }
 
 float generateSquare(int number, DIRECTION direction, SIGN sign, SQUARE_TYPE type) {
-	GLint xOffsetParam;
-	GLint yOffsetParam;
+	//GLint xOffsetParam;
+	//GLint yOffsetParam;
 	GLint indexUniform;
-	xOffsetParam = glGetUniformLocation(program, "xOffset");
-	yOffsetParam = glGetUniformLocation(program, "yOffset");
+	//xOffsetParam = glGetUniformLocation(program, "xOffset");
+	//yOffsetParam = glGetUniformLocation(program, "yOffset");
 	indexUniform = glGetUniformLocation(program, "colorIndex");
 	float directionalBuffer = sign == Positive ? spaceBuffer : -spaceBuffer;
 
@@ -211,10 +186,10 @@ float generateSquare(int number, DIRECTION direction, SIGN sign, SQUARE_TYPE typ
 
 	GLuint loc1 = glGetAttribLocation(program, "vColor");
 	glEnableVertexAttribArray(loc1);
-	glVertexAttribPointer(loc1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
+	glVertexAttribPointer(loc1, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
 
 	setupColor(colorOptions[0]);
-	addSquare(startingXPoint, startingYPoint, xOffsetParam, yOffsetParam, indexUniform, type);
+	addSquare(startingXPoint, startingYPoint, indexUniform, type);
 	return direction == X ? startingXPoint : startingYPoint;
 }
 
@@ -478,15 +453,25 @@ keyboard(unsigned char key, int x, int y)
 }
 
 void handleSpecialKeypress(int key, int x, int y) {
-	switch (key) {
-		case GLUT_KEY_UP:
-			unit *= 1.1;
-			glutPostRedisplay();
-			break;
-		case GLUT_KEY_DOWN:
-			unit /= 1.1;
-			glutPostRedisplay();
-			break;
+	if (inputState == MOVE) {
+		switch (key) {
+			case GLUT_KEY_LEFT:
+				rotate += 90;
+				glutPostRedisplay();
+				break;
+			case GLUT_KEY_RIGHT:
+				rotate -= 90;
+				glutPostRedisplay();
+				break;
+			case GLUT_KEY_UP:
+				scale *= 1.1;
+				glutPostRedisplay();
+				break;
+			case GLUT_KEY_DOWN:
+				scale *= 0.9;
+				glutPostRedisplay();
+				break;
+		}
 	}
 }
 
