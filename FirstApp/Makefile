@@ -1,8 +1,8 @@
 CC = g++
 CFLAGS = -Wall
-PROG = world
+PROG = FirstApp
 
-SRCS = main.cpp
+SRCS = FirstApp.cpp InitShader.cpp 
 
 ifeq ($(shell uname),Darwin)
 	LIBS = -framework OpenGL -framework GLUT
