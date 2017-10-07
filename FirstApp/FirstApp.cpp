@@ -496,7 +496,11 @@ main(int argc, char **argv)
 	// Initialize GLUT
 	glutInit(&argc, argv);
 	// Initialize the display mode to a buffer with Red, Green, Blue and Alpha channels
+	#if __APPLE__
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_3_2_CORE_PROFILE);
+	#else 
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+	#endif
 	// Set the window size
 	glutInitWindowSize(width, height);
 

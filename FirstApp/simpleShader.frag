@@ -1,10 +1,10 @@
-#version 120
+#version 150
 
-varying vec4 rColor;
-varying vec4  fColor;
+in vec4 rColor;
+out vec4  fColor;
 
 void
 main()
 {
-    //fColor = rColor;
+    fColor = rColor;
 }

@@ -1,13 +1,12 @@
-#version 120
+#version 150
 
-varying vec4 vPosition;
-varying vec4 vColor;
-varying vec4 rColor;
+in vec4 vPosition;
+in vec4 vColor;
+out vec4 rColor;
 uniform float xOffset;
 uniform float yOffset;
 uniform int colorIndex;
 uniform mat4 ModelView;
-
 
 void
 main()
