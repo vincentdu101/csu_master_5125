@@ -6,45 +6,21 @@ enum DIRECTION { X, Y };
 enum SIGN { Positive, Negative };
 enum SQUARE_TYPE { NORMAL, DIAGONAL };
 enum MOVE_STATE {MOVE, WAIT, PLACE};
-
-const int NumPoints = 6;
+enum tetrisPiece { O, T, S, Z, I, L, J };
 GLuint program = 0;
+const int NumPoints = 6;
 float spaceBuffer;
-float startingXPoint = 0.0;
-float startingYPoint = 0.0;
 float unit = 1.0 / 40;
-float xOffset = 0.0;
-float yOffset = 0.0;
-float scale = 1.0;
 vec4 points[NumPoints];
 vec3 colors[NumPoints];
-int colorIndex = 0;
-bool fillMode = true;
-GLint colorAltIndex = -1;
-char choice;
-GLfloat width = 1536;
-GLfloat height = 1024;
-MOVE_STATE inputState;
-GLfloat radians = 0.001;
-float rotate = 0;
-bool rotateNow = false;
-int xAxis = 0;
-vec4 vertices[];
-
 vec3 colorOptions[] = {
 	vec3(1.0, 0.0, 0.0),
 	vec3(0.0, 1.0, 0.0),
 	vec3(0.0, 0.0, 1.0),
 	vec3(1.0, 1.0, 0.0),
 	vec3(0.0, 1.0, 1.0),
-	vec3(1.0, 1.0, 0.0)
+	vec3(2.0, 0.0, 1.0)
 };
-
-//----------------------------------------------------------------------------
-/* This function initializes an array of 3d vectors
-and sends it to the graphics card along with shaders
-properly connected to them.
-*/
 
 void setupColor(vec3 color) {
 	colors[0] = color;
@@ -60,10 +36,51 @@ void setupColor(vec3 color) {
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(colors), colors);
 }
 
-void resetStartingPoint() {
-	startingXPoint = spaceBuffer * -15;
-	startingYPoint = 0.0;
+class Shape {
+public:
+	vec2 position;
+	GLfloat scale;
+	GLfloat rotation;
+	vec4 color;
+	tetrisPiece piece;
+
+	Shape(tetrisPiece piece);
+	void draw();
+
+};
+
+Shape::Shape(tetrisPiece newPiece) {
+	position = vec2(0.0, 0.0);
+	scale = 1.0;
+	rotation = 0.0;
+	color = vec4(0.0, 0.0, 0.0, 1.0);
+	piece = newPiece;
 }
+
+void Shape::draw() {
+	GLint mainColorUniform = glGetUniformLocation(program, "mainColor");
+	GLuint modelProgram = glGetUniformLocation(program, "ModelView");
+	mat4 modelView = Translate(position.x, position.y, 0.0) * RotateZ(rotation) * Scale(scale);
+	glUniformMatrix4fv(modelProgram, 1, GL_TRUE, modelView);
+	glUniform3fv(mainColorUniform, 1, color);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+}
+
+GLfloat width = 1536;
+GLfloat height = 1024;
+MOVE_STATE inputState;
+vec4 vertices[];
+Shape *shapes[30];
+Shape *currentShape = nullptr;
+int shapeIndex = 0;
+int existingShape = -1;
+vec4 existingColor;
+
+//----------------------------------------------------------------------------
+/* This function initializes an array of 3d vectors
+and sends it to the graphics card along with shaders
+properly connected to them.
+*/
 
 void initVerticesAndSpaceBuffer() {
 	spaceBuffer = unit * 2;
@@ -83,7 +100,7 @@ void initVerticesAndSpaceBuffer() {
 	};
 
 	// Select an arbitrary initial point inside of the triangle
-	points[0] = vec4(0.0, 0.0, 0.0, 1.0);
+	points[0] = vec4(1.0, 1.0, 1.0, 1.0);
 
 	// compute and store NumPoints - 1 new points
 	for (int i = 0; i < NumPoints * 2; i++) {
@@ -96,7 +113,6 @@ init(void)
 {
 	// Specifiy the vertices for a triangle
 	initVerticesAndSpaceBuffer();
-	resetStartingPoint();
 
 	// Create a vertex array object
 	GLuint vao;
@@ -107,6 +123,8 @@ init(void)
 	GLuint buffer;
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+
+	setupColor(vec3(0.0, 0.0, 0.0));
 
 	// Load shaders and use the resulting shader program
 	program = InitShader("simpleShader.vert", "simpleShader.frag");
@@ -128,204 +146,29 @@ init(void)
 	glShadeModel(GL_FLAT);
 }
 
-void addNormalSquare(float x, float y, GLint indexUniform) {
-	//glUniform1f(xOffsetParam, x + xOffset);
-	//glUniform1f(yOffsetParam, y + yOffset);
-	GLuint modelProgram = glGetUniformLocation(program, "ModelView");
-	mat4 modelView = Translate(x + xOffset, y + yOffset, 0.0) * RotateZ(rotate) * Scale(scale);
-	glUniformMatrix4fv(modelProgram, 1, GL_TRUE, modelView);
-	glUniform1i(indexUniform, colorIndex);
-
-	if (fillMode) {
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDrawArrays(GL_TRIANGLES, 3, 3);
-	}
-	else {
-		glDrawArrays(GL_LINE_LOOP, 0, 3);
-	}
-}
-
-void addDiagonalSquare(float x, float y, GLint indexUniform) {
-	//glUniform1f(xOffsetParam, x + xOffset);
-	// glUniform1f(yOffsetParam, y + yOffset);
-	GLint modelProgram = glGetAttribLocation(program, "ModelView");
-	mat4 modelView = Translate(x + xOffset, y + yOffset, 0.0);
-	glUniformMatrix4fv(modelProgram, 1, GL_TRUE, modelView);
-	glUniform1i(indexUniform, colorIndex);
-	if (fillMode) {
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDrawArrays(GL_TRIANGLES, 3, 3);
-	}
-	else {
-		glDrawArrays(GL_LINE_LOOP, 0, 3);
-	}
-}
-
-void addSquare(float x, float y, GLint indexUniform, SQUARE_TYPE type) {
-	if (type == NORMAL) {
-		addNormalSquare(startingXPoint, startingYPoint, indexUniform);
-	} else if (type == DIAGONAL) {
-		addDiagonalSquare(startingXPoint, startingYPoint, indexUniform);
-	}
-}
-
-float generateSquare(int number, DIRECTION direction, SIGN sign, SQUARE_TYPE type) {
-	//GLint xOffsetParam;
-	//GLint yOffsetParam;
-	GLint indexUniform;
-	//xOffsetParam = glGetUniformLocation(program, "xOffset");
-	//yOffsetParam = glGetUniformLocation(program, "yOffset");
-	indexUniform = glGetUniformLocation(program, "colorIndex");
-	float directionalBuffer = sign == Positive ? spaceBuffer : -spaceBuffer;
-
-	if (direction == X) {
-		startingXPoint += (directionalBuffer * number);
-	} else if (direction == Y) {
-		startingYPoint += (directionalBuffer * number);
-	}
-
-	GLuint loc1 = glGetAttribLocation(program, "vColor");
-	glEnableVertexAttribArray(loc1);
-	glVertexAttribPointer(loc1, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
-
-	setupColor(colorOptions[0]);
-	addSquare(startingXPoint, startingYPoint, indexUniform, type);
-	return direction == X ? startingXPoint : startingYPoint;
-}
-
-void generateLetterO() {
-	startingYPoint = generateSquare(0, Y, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
-	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
-	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
-	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
-	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
-	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
-}
-
-void generateLetterI() {
-	startingYPoint = generateSquare(0, Y, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingXPoint -= spaceBuffer;
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingXPoint -= spaceBuffer * (2);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
- 	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-}
-
-void generateLetterS() {
-	startingYPoint = generateSquare(0, Y, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Negative, NORMAL);
-}
-
-void generateLetterZ() {
-	startingYPoint = generateSquare(0, Y, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, DIAGONAL);
-}
-
-void generateLetterL() {
-	startingYPoint = generateSquare(0, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-}
-
-void generateLetterJ() {
-	startingYPoint = generateSquare(0, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Negative, NORMAL);
-	startingXPoint = generateSquare(1, X, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
-	startingYPoint = generateSquare(1, Y, Positive, NORMAL);
-}
-
-void generateLetterT() {
-	startingYPoint = generateSquare(0, Y, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingXPoint = generateSquare(1, X, Positive, NORMAL);
-	startingXPoint -= spaceBuffer;
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-	startingYPoint = generateSquare(1, Y, Negative, NORMAL);
-}
-
-void generateLetterViaChoice() {
-	switch (choice) {
-	case 'o':
-		generateLetterO();
-		break;
-	case 'i':
-		generateLetterI();
-		break;
-	case 's':
-		generateLetterS();
-		break;
-	case 'z':
-		generateLetterZ();
-		break;
-	case 'l':
-		generateLetterL();
-		break;
-	case 'j':
-		generateLetterJ();
-		break;
-	case 't':
-		generateLetterT();
-		break;
-	}
-}
-
 void recalculateDimensions() {
 	width = glutGet(GLUT_WINDOW_WIDTH);
 	height = glutGet(GLUT_WINDOW_HEIGHT);
+}
+
+void findExistingShape(float x, float y) {
+	for (int i = 0; i < shapeIndex; i++) {
+		if (shapes[i] != nullptr) {
+			float startX = shapes[i]->position.x - unit;
+			float endX = shapes[i]->position.x + unit;
+			float startY = shapes[i]->position.y - unit;
+			float endY = shapes[i]->position.y + unit;
+
+			bool withinX = startX <= x && x <= endX;
+			bool withinY = startY <= y && y <= endY;
+
+			if (withinX || withinY) {
+				existingShape = i;
+				break;
+			}
+		}
+	}
+	currentShape = nullptr;
 }
 
 void mouse(GLint button, GLint state, GLint x, GLint y) {
@@ -335,11 +178,32 @@ void mouse(GLint button, GLint state, GLint x, GLint y) {
 	GLfloat yWorld = (GLfloat)y / height * 2 - 1;
 
 	if (state == GLUT_DOWN && inputState == MOVE) {
-		xOffset = xWorld;
-		yOffset = yWorld;
-		inputState = PLACE;
-		//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
-		glutPostRedisplay();
+		if (currentShape != nullptr) {
+			currentShape->position = vec2(xWorld, yWorld);
+			inputState = PLACE;
+			inputState = WAIT;
+			glutPostRedisplay();
+			//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
+		}
+		else if (existingShape != -1) {
+			shapes[existingShape]->position = vec2(xWorld, yWorld);
+			shapes[existingShape]->color = existingColor;
+			inputState = PLACE;
+			inputState = WAIT;
+			existingShape = -1;
+			glutPostRedisplay();
+		}
+	}
+	else if (state == GLUT_DOWN) {
+		findExistingShape(xWorld, yWorld);
+		if (existingShape != -1 && inputState != MOVE) {
+			shapes[existingShape]->position = vec2(xWorld, yWorld);
+			existingColor = shapes[existingShape]->color;
+			shapes[existingShape]->color = vec4(1.0, 1.0, 1.0, 1.0);
+			inputState = MOVE;
+			//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
+			glutPostRedisplay();
+		}
 	}
 }
 
@@ -349,8 +213,13 @@ void mouseMove(GLint x, GLint y) {
 		y = height - y;
 		GLfloat xWorld = (GLfloat)x / width * 2 - 1;
 		GLfloat yWorld = (GLfloat)y / height * 2 - 1;
-		xOffset = xWorld;
-		yOffset = yWorld;
+		if (currentShape != nullptr) {
+			currentShape->position = vec2(xWorld, yWorld);
+		}
+		
+		if (existingShape != -1) {
+			shapes[existingShape]->position = vec2(xWorld, yWorld);
+		}
 		//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
 		glutPostRedisplay();
 	}
@@ -361,23 +230,38 @@ void initiate(int x, int y) {
 	y = height - y;
 	GLfloat xWorld = (GLfloat)x / width * 2 - 1;
 	GLfloat yWorld = (GLfloat)y / height * 2 - 1;
-	xOffset = xWorld;
-	yOffset = yWorld;
-	inputState = MOVE;
-	//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
-	glutPostRedisplay();
+	if (currentShape != nullptr) {
+		currentShape->position = vec2(xWorld, yWorld);
+		shapes[shapeIndex++] = currentShape;
+		inputState = MOVE;
+		//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
+		glutPostRedisplay();
+	}
+	else if (existingShape != -1) {
+		shapes[existingShape]->position = vec2(xWorld, yWorld);
+		inputState = MOVE;
+		//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
+		glutPostRedisplay();
+	}
 }
 
 void handleMenu(int colorId) {
-	colorIndex = colorId;
+	if (currentShape != nullptr) {
+		currentShape->color = colorOptions[colorId];
+	}
+	else if (existingShape != -1) {
+		shapes[existingShape]->color = colorOptions[colorId];
+	}
 }
 
 void createMenu() {
 	int menu_id = glutCreateMenu(handleMenu);
-	glutAddMenuEntry("Yellow", 0);
-	glutAddMenuEntry("Pink", 1);
-	glutAddMenuEntry("Red", 2);
-	glutAddMenuEntry("White", 3);
+	glutAddMenuEntry("Red", 0);
+	glutAddMenuEntry("Green", 1);
+	glutAddMenuEntry("Blue", 2);
+	glutAddMenuEntry("Yellow", 3);
+	glutAddMenuEntry("Cyan", 4);
+	glutAddMenuEntry("Pink", 5);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
@@ -389,15 +273,26 @@ call it directly.
 void
 display(void)
 {
+
 	glClear(GL_COLOR_BUFFER_BIT);				// clear the window
+	for (int i = 0; i < shapeIndex; i++) {
+		if (shapes[i] != nullptr) {
+			shapes[i]->draw();
+		}
+	}
 	switch (inputState) {
 		case WAIT:
 			break;
 		case MOVE:
 		case PLACE:
-			init();
-			resetStartingPoint();
-			generateLetterViaChoice();
+			if (currentShape != nullptr) {
+				currentShape->draw();
+			}
+
+			if (existingShape != -1) {
+				shapes[existingShape]->draw();
+			}
+		
 			break;
 	}
 	glFlush();
@@ -412,43 +307,49 @@ directly.
 void
 keyboard(unsigned char key, int x, int y)
 {
-	switch (key) {
+
+	if (existingShape == -1) {
+		switch (key) {
 		case 033:				// escape key
 			exit(EXIT_SUCCESS);	// terminates the program
 			break;
 		case 'o':
-			choice = 'o';
+			currentShape = new Shape(O);
 			initiate(x, y);
 			break;
 		case 'i':
-			choice = 'i';
+			currentShape = new Shape(I);
 			initiate(x, y);
 			break;
 		case 's':
-			choice = 's';
+			currentShape = new Shape(S);
 			initiate(x, y);
 			break;
 		case 'z':
-			choice = 'z';
+			currentShape = new Shape(Z);
 			initiate(x, y);
 			break;
 		case 'l':
-			choice = 'l';
+			currentShape = new Shape(L);
 			initiate(x, y);
 			break;
 		case 'j':
-			choice = 'j';
+			currentShape = new Shape(J);
 			initiate(x, y);
 			break;
 		case 't':
-			choice = 't';
+			currentShape = new Shape(T);
 			initiate(x, y);
 			break;
-		case 'p':
-			rotateNow = true;
-		default:
-			rotateNow = false;
+		case 'd':
+			for (int i = 0; i < shapeIndex; i++) {
+				shapes[i] = nullptr;
+			}
+			glutPostRedisplay();
 			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -456,20 +357,44 @@ void handleSpecialKeypress(int key, int x, int y) {
 	if (inputState == MOVE) {
 		switch (key) {
 			case GLUT_KEY_LEFT:
-				rotate += 90;
-				glutPostRedisplay();
+				if (currentShape != nullptr) {
+					currentShape->rotation += 90;
+					glutPostRedisplay();
+				}
+				else if (existingShape != -1) {
+					shapes[existingShape]->rotation += 90;
+					glutPostRedisplay();
+				}
 				break;
 			case GLUT_KEY_RIGHT:
-				rotate -= 90;
-				glutPostRedisplay();
+				if (currentShape != nullptr) {
+					currentShape->rotation -= 90;
+					glutPostRedisplay();
+				}
+				else if (existingShape != -1) {
+					shapes[existingShape]->rotation -= 90;
+					glutPostRedisplay();
+				}
 				break;
 			case GLUT_KEY_UP:
-				scale *= 1.1;
-				glutPostRedisplay();
+				if (currentShape != nullptr) {
+					currentShape->scale *= 1.1;
+					glutPostRedisplay();
+				}
+				else if (existingShape != -1) {
+					shapes[existingShape]->scale *= 1.1;
+					glutPostRedisplay();
+				}
 				break;
 			case GLUT_KEY_DOWN:
-				scale *= 0.9;
-				glutPostRedisplay();
+				if (currentShape != nullptr) {
+					currentShape->scale *= 0.9;
+					glutPostRedisplay();
+				}
+				else if (existingShape != -1) {
+					shapes[existingShape]->scale *= 0.9;
+					glutPostRedisplay();
+				}
 				break;
 		}
 	}

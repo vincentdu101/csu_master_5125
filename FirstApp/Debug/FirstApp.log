@@ -7,15 +7,16 @@ c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(723): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(726): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\mat.h(743): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(15): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(28): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(327): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(328): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(333): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(349): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(361): warning C4244: '=': conversion from 'GLfloat' to 'int', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(467): warning C4305: '*=': truncation from 'double' to 'float'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(471): warning C4305: '*=': truncation from 'double' to 'float'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(491): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(13): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(150): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(151): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(178): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(215): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(232): warning C4244: '=': conversion from 'GLfloat' to 'int', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(383): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(387): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(393): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(397): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\firstappglew\firstapp\firstapp.cpp(418): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\FirstAppGLEW\Debug\FirstApp.exe
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\FirstAppGLEW\Debug\FirstApp.pdb (Partial PDB)

@@ -87,7 +87,6 @@
   <ItemGroup>
     <ClCompile Include="FirstApp.cpp" />
     <ClCompile Include="InitShader.cpp" />
-    <ClCompile Include="Letters.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="simpleShader.frag" />

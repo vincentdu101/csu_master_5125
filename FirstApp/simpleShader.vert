@@ -3,30 +3,12 @@
 in vec4 vPosition;
 in vec4 vColor;
 out vec4 rColor;
-uniform float xOffset;
-uniform float yOffset;
-uniform int colorIndex;
 uniform mat4 ModelView;
-
-vec4 colorOptions[] = {
-	vec4(0.0, 1.0, 0.0, 1.0),
-	vec4(0.0, 0.0, 1.0, 1.0),
-	vec4(1.0, 0.0, 0.0, 1.0),
-	vec4(1.0, 1.0, 1.0, 1.0),
-	vec4(0.0, -1.0, -1.0, 1.0),
-	vec4(1.0, 1.0, 1.0, 1.0),
-	vec4(0.0, -1.0, -1.0, 1.0),
-	vec4(-1.0, 0.0, 0.0, 1.0)
-};
+uniform vec3 mainColor;
 
 void
 main()
 {
-	if (colorIndex != -1) {
-		rColor = vColor + colorOptions[colorIndex];
-	} else {
-		rColor = vColor;
-	}
-
+	rColor = vColor + vec4(mainColor, 1.0);
     gl_Position = ModelView * vPosition;
 }
