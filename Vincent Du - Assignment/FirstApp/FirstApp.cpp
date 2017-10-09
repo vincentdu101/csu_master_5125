@@ -251,6 +251,7 @@ void handleMenu(int colorId) {
 	}
 	else if (existingShape != -1) {
 		shapes[existingShape]->color = colorOptions[colorId];
+		existingColor = colorOptions[colorId];
 	}
 }
 
