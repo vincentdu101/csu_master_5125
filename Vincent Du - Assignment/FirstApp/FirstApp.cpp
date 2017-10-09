@@ -87,7 +87,7 @@ void initVerticesAndSpaceBuffer() {
 
 	vec3 vertices[] = {
 		vec3(unit, unit, 0.0),
-		vec3(unit, -unit, 0.0),
+		vec3(-unit, -unit, 0.0),
 		vec3(-unit, unit, 0.0),
 		vec3(-unit, unit, 0.0),
 		vec3(-unit, -unit, 0.0),
@@ -154,10 +154,10 @@ void recalculateDimensions() {
 void findExistingShape(float x, float y) {
 	for (int i = 0; i < shapeIndex; i++) {
 		if (shapes[i] != nullptr) {
-			float startX = shapes[i]->position.x - unit;
-			float endX = shapes[i]->position.x + unit;
-			float startY = shapes[i]->position.y - unit;
-			float endY = shapes[i]->position.y + unit;
+			float startX = shapes[i]->position.x - (unit * shapes[i]->scale);
+			float endX = shapes[i]->position.x + (unit * shapes[i]->scale);
+			float startY = shapes[i]->position.y - (unit * shapes[i]->scale);
+			float endY = shapes[i]->position.y + (unit * shapes[i]->scale);
 
 			bool withinX = startX <= x && x <= endX;
 			bool withinY = startY <= y && y <= endY;
