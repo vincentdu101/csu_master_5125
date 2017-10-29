@@ -5,10 +5,22 @@
 enum DIRECTION { X, Y };
 enum SIGN { Positive, Negative };
 enum SQUARE_TYPE { NORMAL, DIAGONAL };
+
+// mouse event states that are used to control placement of shape 
+// MOVE - as shape is being moved, no new shape can be intialized until current shape is placed
+// WAIT - state after shape is placed and new shape can be called
+// PLACE - moment shape is placed
 enum MOVE_STATE {MOVE, WAIT, PLACE};
+
+// tetris piece representing each shape
 enum tetrisPiece { O, T, S, Z, I, L, J };
+
+// index of the program, used later mapping shaders to program
 GLuint program = 0;
+
+// number of points in the app that reused throughout
 const int NumPoints = 6;
+
 float spaceBuffer;
 float unit = 1.0 / 40;
 vec4 points[NumPoints];
@@ -23,6 +35,8 @@ vec3 colorOptions[] = {
 };
 
 void setupColor(vec3 color) {
+	// sets up the color of the app by allocating buffer for the number of points and colors possible
+	// for each point
 	colors[0] = color;
 	colors[1] = colors[0];
 	colors[2] = colors[0];
@@ -31,11 +45,14 @@ void setupColor(vec3 color) {
 	colors[5] = colors[0];
 
 	//glBufferData( GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW );
+	// creates and initializes a buffer object's data store for total elements needed
 	glBufferData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors), NULL, GL_STATIC_DRAW);
+	// specifies within the buffer which elements are for which objects
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(colors), colors);
 }
 
+// shape class representing each tetris shape
 class Shape {
 public:
 	vec2 position;
@@ -49,6 +66,7 @@ public:
 
 };
 
+// initial constructor initialize of object contains default data and specs
 Shape::Shape(tetrisPiece newPiece) {
 	position = vec2(0.0, 0.0);
 	scale = 1.0;
@@ -57,17 +75,26 @@ Shape::Shape(tetrisPiece newPiece) {
 	piece = newPiece;
 }
 
+// actually draw shape into the window 
 void Shape::draw() {
+	// returns an integer that represents the location of a specific uniform variable within a program
+	// object
 	GLint mainColorUniform = glGetUniformLocation(program, "mainColor");
 	GLuint modelProgram = glGetUniformLocation(program, "ModelView");
+	// calculate and update matrix of translation, rotation, and scale changes for the object 
+	// (here it's a triangle) 
 	mat4 modelView = Translate(position.x, position.y, 0.0) * RotateZ(rotation) * Scale(scale);
+	// sets value into uniform variable by finding uniform variable's location index
 	glUniformMatrix4fv(modelProgram, 1, GL_TRUE, modelView);
 	glUniform3fv(mainColorUniform, 1, color);
+	// draw shapes, here its a triangle, starting from points index 0 to 3 from array data
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
+// window dimensions
 GLfloat width = 1536;
 GLfloat height = 1024;
+// current move state
 MOVE_STATE inputState;
 vec4 vertices[];
 Shape *shapes[30];
@@ -76,12 +103,7 @@ int shapeIndex = 0;
 int existingShape = -1;
 vec4 existingColor;
 
-//----------------------------------------------------------------------------
-/* This function initializes an array of 3d vectors
-and sends it to the graphics card along with shaders
-properly connected to them.
-*/
-
+// this function initializes the vertices and points array
 void initVerticesAndSpaceBuffer() {
 	spaceBuffer = unit * 2;
 
@@ -108,6 +130,11 @@ void initVerticesAndSpaceBuffer() {
 	}
 }
 
+//----------------------------------------------------------------------------
+/* This function initializes an array of 3d vectors
+and sends it to the graphics card along with shaders
+properly connected to them.
+*/
 void
 init(void)
 {
@@ -131,9 +158,15 @@ init(void)
 	// make these shaders the current shaders
 	glUseProgram(program);
 
-	// Initialize the vertex position attribute from the vertex shader
+	// Initialize the vertex position attribute from the vertex shader by linking it with the 
+	// generic attribute data that will be generated when the shape is rendered 
+	
+	// returns the location of an attribute variable
 	GLuint loc = glGetAttribLocation(program, "vPosition");
+	// enable a generic vertex attribute array via the attribute variable's location index
 	glEnableVertexAttribArray(loc);
+	// state the location and data format of the array of generic vertex attributes when 
+	// rendering is done, location specified by loc which points to the location of the attribute variable
 	glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 	// Initialize the vertex color attribute from the vertex shader
@@ -141,16 +174,24 @@ init(void)
 	glEnableVertexAttribArray(loc1);
 	glVertexAttribPointer(loc1, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
 
+	// clear the background
 	glClearColor(0.5, 0.5, 0.5, 1.0); // gray background
+	// specifies how to represent the polygons for rasterization, whether to mark the points, draw the lines,
+	// or color into the spaces between the lines
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	// select flat or smooth shading
 	glShadeModel(GL_FLAT);
 }
 
 void recalculateDimensions() {
+	// get the latest width and height dimensions
 	width = glutGet(GLUT_WINDOW_WIDTH);
 	height = glutGet(GLUT_WINDOW_HEIGHT);
 }
 
+// - this function tries to go through all the shapes and look for a match in terms of a shape 
+//   with the same area of x and y as specified by the input parameters 
+// - if a match exists then that shape is set to the existing shape 
 void findExistingShape(float x, float y) {
 	for (int i = 0; i < shapeIndex; i++) {
 		if (shapes[i] != nullptr) {
@@ -171,12 +212,17 @@ void findExistingShape(float x, float y) {
 	currentShape = nullptr;
 }
 
+// this callback function for mouse click event gets the current mouse coordinates and tracks 
+// the state of the input state on whether theres a need to redraw shapes based on mouse click
 void mouse(GLint button, GLint state, GLint x, GLint y) {
 	recalculateDimensions();
 	y = height - y;
+
+	// adjusts coordinates of mouse click to projection coordinate
 	GLfloat xWorld = (GLfloat)x / width * 2 - 1;
 	GLfloat yWorld = (GLfloat)y / height * 2 - 1;
 
+	// mouse click and state is moving with shape
 	if (state == GLUT_DOWN && inputState == MOVE) {
 		if (currentShape != nullptr) {
 			currentShape->position = vec2(xWorld, yWorld);
@@ -186,11 +232,14 @@ void mouse(GLint button, GLint state, GLint x, GLint y) {
 			//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
 		}
 		else if (existingShape != -1) {
+			// update shape with latest coordinate info
 			shapes[existingShape]->position = vec2(xWorld, yWorld);
 			shapes[existingShape]->color = existingColor;
 			inputState = PLACE;
 			inputState = WAIT;
 			existingShape = -1;
+
+			// redraws window with latest changes
 			glutPostRedisplay();
 		}
 	}
@@ -207,6 +256,7 @@ void mouse(GLint button, GLint state, GLint x, GLint y) {
 	}
 }
 
+// callback function for mouse still moving event
 void mouseMove(GLint x, GLint y) {
 	if (inputState == MOVE) {
 		recalculateDimensions();
@@ -225,6 +275,7 @@ void mouseMove(GLint x, GLint y) {
 	}
 }
 
+// initiates initial selection of shape and prepare it for movement with the mouse
 void initiate(int x, int y) {
 	recalculateDimensions();
 	y = height - y;
@@ -245,6 +296,8 @@ void initiate(int x, int y) {
 	}
 }
 
+// handle menu events that appear when right clicking in window
+// gets user selection and reloads color into shape
 void handleMenu(int colorId) {
 	if (currentShape != nullptr) {
 		currentShape->color = colorOptions[colorId];
@@ -255,6 +308,7 @@ void handleMenu(int colorId) {
 	}
 }
 
+// create right-click menu
 void createMenu() {
 	int menu_id = glutCreateMenu(handleMenu);
 	glutAddMenuEntry("Red", 0);
@@ -430,7 +484,7 @@ main(int argc, char **argv)
 
 	// provide the function that handles the display
 	glutDisplayFunc(display);
-	// provide the functions that handles the keyboard
+	// provide the functions that handles the keyboard, mouse, movement of mouse, and special keys as needed
 	glutKeyboardFunc(keyboard);
 	glutMouseFunc(mouse);
 	glutPassiveMotionFunc(mouseMove);

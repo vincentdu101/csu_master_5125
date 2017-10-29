@@ -4,6 +4,7 @@
 namespace Angel {
 
 // Create a NULL-terminated string by reading the provided file
+// 
 static char*
 readShaderSource(const char* shaderFile)
 {
@@ -39,16 +40,23 @@ InitShader(const char* vShaderFile, const char* fShaderFile)
 		{ fShaderFile, GL_FRAGMENT_SHADER, NULL }
     };
 
+	// create the program index that will be used throughout the app as a pointer to the program
+	// where shader files are linked to
     GLuint program = glCreateProgram();
     
     for ( int i = 0; i < 2; ++i ) {
 	Shader& s = shaders[i];
+	// read in shader files 
 	s.source = readShaderSource( s.filename );
+
+	// if shader file is not found
 	if ( shaders[i].source == NULL ) {
 	    std::cerr << "Failed to read " << s.filename << std::endl;
 	    exit( EXIT_FAILURE );
 	}
 
+	// create shader object based on the type (vertex or fragment), allocate memory for it, and 
+	// then compile it 
 	GLuint shader = glCreateShader( s.type );
 	glShaderSource( shader, 1, (const GLchar**) &s.source, NULL );
 	glCompileShader( shader );
@@ -69,6 +77,7 @@ InitShader(const char* vShaderFile, const char* fShaderFile)
 
 	delete [] s.source;
 
+	// attach compiled shader to program for linking
 	glAttachShader( program, shader );
     }
 
