@@ -24,11 +24,18 @@ GLfloat speed = 0.001;
 GLfloat width = 1024;
 GLfloat height = 768;
 
+bool secondLightOn = false;
+
 // light information
-vec4 lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-vec4 lightAmbient = vec4(0.1, 0.1, 0.1, 1.0);
-vec4 lightSpecular = vec4(0.3, 0.3, 0.3, 1.0);
-vec4 lightPosition = vec4(-5.0, 0.0, 5.0, 1.0);
+vec4 lightOneDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+vec4 lightOneAmbient = vec4(0.1, 0.1, 0.1, 1.0);
+vec4 lightOneSpecular = vec4(0.3, 0.3, 0.3, 1.0);
+vec4 lightOnePosition = vec4(-3.0, 0.0, 3.0, 1.0);
+
+vec4 lightTwoDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+vec4 lightTwoAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+vec4 lightTwoSpecular = vec4(1.0, 1.0, 1.0, 1.0);
+vec4 lightTwoPosition = vec4(3.0, 0.0, 3.0, 1.0);
 
 // material information
 vec4 materialDodDiffuse = vec4(0.07568, 0.61424, 0.07568, 1.0);
@@ -53,8 +60,16 @@ GLint modelViewLocation;
 GLint projectionLocation;
 mat4 modelView;
 mat4 projection;
+vec4 at = { 0,0,0,1 };
+vec4 up = { 0,1,0,0 };
 
-GLint lDLocation, lALocation, lSLocation, lPLocation, shininessLocation;
+GLint lDOneLocation, lAOneLocation, lSOneLocation, lPOneLocation; 
+GLint lDTwoLocation, lATwoLocation, lSTwoLocation, lPTwoLocation;
+
+GLint lDP1OneLocation, lAP1OneLocation, lSP1OneLocation, lPP1OneLocation;
+GLint lDP1TwoLocation, lAP1TwoLocation, lSP1TwoLocation, lPP1TwoLocation;
+
+GLint shininessLocation;
 GLint mDLocation, mALocation, mSLocation;
 
 vec4 eye = { 0,0,-10,1 };
@@ -288,7 +303,7 @@ void initializeProgramAndShaders() {
 	currentProgram = program;
 }
 
-void initializeAttribPointers() {
+void initializeAttribPointers(GLuint program) {
 	// Initialize the vertex position attribute from the vertex shader
 	GLuint loc = glGetAttribLocation(program, "vPosition");
 	glEnableVertexAttribArray(loc);
@@ -305,10 +320,35 @@ void initializeAttribPointers() {
 }
 
 void getLightLocationShaderIndices() {
-	lDLocation = glGetUniformLocation(program, "lightDiffuse");
-	lALocation = glGetUniformLocation(program, "lightAmbient");
-	lSLocation = glGetUniformLocation(program, "lightSpecular");
-	lPLocation = glGetUniformLocation(program, "lightPosition");
+	lDOneLocation = glGetUniformLocation(program, "lightOneDiffuse");
+	lAOneLocation = glGetUniformLocation(program, "lightOneAmbient");
+	lSOneLocation = glGetUniformLocation(program, "lightOneSpecular");
+	lPOneLocation = glGetUniformLocation(program, "lightOnePosition");
+
+	lDTwoLocation = glGetUniformLocation(program, "lightTwoDiffuse");
+	lATwoLocation = glGetUniformLocation(program, "lightTwoAmbient");
+	lSTwoLocation = glGetUniformLocation(program, "lightTwoSpecular");
+	lPTwoLocation = glGetUniformLocation(program, "lightTwoPosition");
+
+	mDLocation = glGetUniformLocation(program, "materialDiffuse");
+	mALocation = glGetUniformLocation(program, "materialAmbient");
+	mSLocation = glGetUniformLocation(program, "materialSpecular");
+	shininessLocation = glGetUniformLocation(program, "shininess");
+
+	lDP1OneLocation = glGetUniformLocation(program1, "lightOneDiffuse");
+	lAP1OneLocation = glGetUniformLocation(program1, "lightOneAmbient");
+	lSP1OneLocation = glGetUniformLocation(program1, "lightOneSpecular");
+	lPP1OneLocation = glGetUniformLocation(program1, "lightOnePosition");
+
+	lDP1TwoLocation = glGetUniformLocation(program1, "lightTwoDiffuse");
+	lAP1TwoLocation = glGetUniformLocation(program1, "lightTwoAmbient");
+	lSP1TwoLocation = glGetUniformLocation(program1, "lightTwoSpecular");
+	lPP1TwoLocation = glGetUniformLocation(program1, "lightTwoPosition");
+
+	mDLocation = glGetUniformLocation(program1, "materialDiffuse");
+	mALocation = glGetUniformLocation(program1, "materialAmbient");
+	mSLocation = glGetUniformLocation(program1, "materialSpecular");
+	shininessLocation = glGetUniformLocation(program1, "shininess");
 }
 
 void
@@ -321,13 +361,9 @@ init( void )
 
 	initializeBufferObjects();
 	initializeProgramAndShaders();
-	initializeAttribPointers();
+	initializeAttribPointers(program);
+	initializeAttribPointers(program1);
 	getLightLocationShaderIndices();
-
-	mDLocation = glGetUniformLocation(program, "materialDiffuse");
-	mALocation = glGetUniformLocation(program, "materialAmbient");
-	mSLocation = glGetUniformLocation(program, "materialSpecular");
-	shininessLocation = glGetUniformLocation(program, "shininess");
 
 	glClearColor( 0.5, 0.5, 0.5, 1.0 ); // gray background
 	glPolygonMode(GL_FRONT, GL_FILL);
@@ -374,14 +410,30 @@ void drawSpecificTriangle(solidChoice choice) {
 	}
 }
 
-void setupTriangleAndEnvironment(GLuint program, mat4 translate, solidChoice choice) {
+void setupTriangleAndEnvironment(GLuint inProgram, mat4 translate, solidChoice choice) {
 	glUseProgram(program);
 	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, translate * modelView);
 	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
-	glUniform4fv(lALocation, 1, lightAmbient);
-	glUniform4fv(lDLocation, 1, lightDiffuse);
-	glUniform4fv(lSLocation, 1, lightSpecular);
-	glUniform4fv(lPLocation, 1, lightPosition);
+	if (inProgram == program) {
+		glUniform4fv(lAOneLocation, 1, lightOneAmbient);
+		glUniform4fv(lDOneLocation, 1, lightOneDiffuse);
+		glUniform4fv(lSOneLocation, 1, lightOneSpecular);
+		glUniform4fv(lPOneLocation, 1, lightOnePosition);
+		glUniform4fv(lATwoLocation, 1, lightTwoAmbient);
+		glUniform4fv(lDTwoLocation, 1, lightTwoDiffuse);
+		glUniform4fv(lSTwoLocation, 1, lightTwoSpecular);
+		glUniform4fv(lPTwoLocation, 1, lightTwoPosition);
+	}
+	else {
+		glUniform4fv(lAP1OneLocation, 1, lightOneAmbient);
+		glUniform4fv(lDP1OneLocation, 1, lightOneDiffuse);
+		glUniform4fv(lSP1OneLocation, 1, lightOneSpecular);
+		glUniform4fv(lPP1OneLocation, 1, lightOnePosition);
+		glUniform4fv(lAP1TwoLocation, 1, lightTwoAmbient);
+		glUniform4fv(lDP1TwoLocation, 1, lightTwoDiffuse);
+		glUniform4fv(lSP1TwoLocation, 1, lightTwoSpecular);
+		glUniform4fv(lPP1TwoLocation, 1, lightTwoPosition);
+	}
 	glUniform1f(shininessLocation, shininess);
 	setupMaterialPerSolid(choice);
 	drawSpecificTriangle(choice);
@@ -393,33 +445,54 @@ void setupTriangleAndEnvironment(GLuint program, mat4 translate, solidChoice cho
    call it directly.
 */
 
-void
-display( void )
-{
-	GLint offsetyParam, offsetxParam;
-	offsetyParam = glGetUniformLocation(program, "offsety");
-	offsetxParam = glGetUniformLocation(program, "offsetx");
-
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void setupViewport(mat4 camera, GLuint program) {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// clear the window
 	modelViewLocation = glGetUniformLocation(program, "ModelView");
 	projectionLocation = glGetUniformLocation(program, "Projection");
 	modelView = RotateZ(rotation) * RotateX(rotation * 2) * RotateY(rotation * 3);
 	//vec4 eye = { 0,0,-5,1 };
-	vec4 at = { 0,0,0,1 };
-	vec4 up = { 0,1,0,0 };
-	projection = Perspective(30, 1.0, 0.3, 20.0) * LookAt(eye, at, up);
+	projection = Perspective(30, 1.0, 0.3, 20.0) * camera;
 	//mat4 camera = LookAt(eye, at, up);
 	//mat4 projection = Ortho(-mag + offset, mag + offset, -mag - offset, mag - offset, mag, -mag);
 	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Cube);
 	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Tetra);
 	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Dodeca);
 	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Octa);
+}
 
-	setupTriangleAndEnvironment(program1, Translate(2.0, 0.0, 0.0), Cube);
-	setupTriangleAndEnvironment(program1, Translate(2.0, 0.0, 0.0), Tetra);
-	setupTriangleAndEnvironment(program1, Translate(2.0, 0.0, 0.0), Dodeca);
-	setupTriangleAndEnvironment(program1, Translate(2.0, 0.0, 0.0), Octa);
+void
+display( void )
+{
+	mat4 camera = LookAt(eye, at, up);
+	//glViewport(0, 0, width / 2, height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// clear the window
+	modelViewLocation = glGetUniformLocation(program, "ModelView");
+	projectionLocation = glGetUniformLocation(program, "Projection");
+	modelView = RotateZ(rotation) * RotateX(rotation * 2) * RotateY(rotation * 3);
+	//vec4 eye = { 0,0,-5,1 };
+	projection = Perspective(30, 1.0, 0.3, 20.0) * camera;
+	//mat4 camera = LookAt(eye, at, up);
+	mat4 projection = Ortho(-mag + offset, mag + offset, -mag - offset, mag - offset, mag, -mag);
+	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Cube);
+	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Tetra);
+	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Dodeca);
+	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Octa);
+	//glViewport(width / 2, 0, width / 2, height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// clear the window
+	modelViewLocation = glGetUniformLocation(program1, "ModelView");
+	projectionLocation = glGetUniformLocation(program1, "Projection");
+	modelView = RotateZ(rotation) * RotateX(rotation * 2) * RotateY(rotation * 3);
+	//vec4 eye = { 0,0,-5,1 };
+	projection = Perspective(30, 1.0, 0.3, 20.0) * camera * projection;
+	//mat4 camera = LookAt(eye, at, up);
+	//mat4 projection = Ortho(-mag + offset, mag + offset, -mag - offset, mag - offset, mag, -mag);
+	setupTriangleAndEnvironment(program1, Translate(-2.0, 0.0, 0.0), Cube);
+	setupTriangleAndEnvironment(program1, Translate(-2.0, 0.0, 0.0), Tetra);
+	setupTriangleAndEnvironment(program1, Translate(-2.0, 0.0, 0.0), Dodeca);
+	setupTriangleAndEnvironment(program1, Translate(-2.0, 0.0, 0.0), Octa);
 	
 	// flush the buffer
 	glutSwapBuffers();
@@ -444,33 +517,24 @@ idle()
 void
 keyboard( unsigned char key, int x, int y )
 {
-	
     switch ( key ) {
     case 033:					// escape key
         exit( EXIT_SUCCESS );	// terminates the program
         break;
-	case 'p':
-		if (currentProgram == program) {
-			currentProgram = program1;
+	case 'l':
+		if (secondLightOn) {
+			lightTwoDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+			lightTwoAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+			lightTwoSpecular = vec4(1.0, 1.0, 1.0, 1.0);
+			secondLightOn = false;
 		}
 		else {
-			currentProgram = program;
+			lightOneDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+			lightOneAmbient = vec4(0.1, 0.1, 0.1, 1.0);
+			lightOneSpecular = vec4(0.3, 0.3, 0.3, 1.0);
+			secondLightOn = true;
 		}
-		/*
-		if (inputState == WAIT)
-		{
-			width = glutGet(GLUT_WINDOW_WIDTH);
-			height = glutGet(GLUT_WINDOW_HEIGHT);
-			y = height - y;
-			GLfloat xWorld = (GLfloat)x / width * 2 - 1;
-			GLfloat yWorld = (GLfloat)y / height * 2 - 1;
-			offsetx = xWorld;
-			offsety = yWorld;
-			//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
-			inputState = MOVE;
-			glutPostRedisplay();
-		}
-		*/
+		glutPostRedisplay();
 		break;
 	case 'a':
 		//rotation += 90;
@@ -498,6 +562,23 @@ keyboard( unsigned char key, int x, int y )
 	case 'g':
 		mag *= 0.9;
 		break;
+	}
+}
+
+void specialInput(int key, int x, int y) {
+	switch (key) {
+		case GLUT_KEY_UP:
+			at.y += 0.1;
+			break;
+		case GLUT_KEY_DOWN:
+			at.y -= 0.1;
+			break;
+		case GLUT_KEY_RIGHT:
+			at.x += 0.1;
+			break;
+		case GLUT_KEY_LEFT:
+			at.x -= 0.1;
+			break;
 	}
 }
 
@@ -531,6 +612,9 @@ mouseMove(GLint x, GLint y)
 		GLfloat yWorld = (GLfloat)y / height * 2 - 1;
 		offsetx = xWorld;
 		offsety = yWorld;
+
+		at.x += offsetx;
+		at.y += offsety;
 		//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
 		glutPostRedisplay();
 	}
@@ -598,11 +682,11 @@ main( int argc, char **argv )
 	glutDisplayFunc( display );
 	// provide the functions that handles the keyboard
     glutKeyboardFunc( keyboard );
-	// create menu
+	// create menug
 	//createMenu();
 	glutMouseFunc(mouse);
 	//glutPassiveMotionFunc(mouseMove);
-
+	glutSpecialFunc(specialInput);
 	glutIdleFunc(idle);
 
     // Wait for input from the user (the only meaningful input is the key escape)
