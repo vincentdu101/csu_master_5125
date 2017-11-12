@@ -64,7 +64,7 @@ mat4 projection;
 vec4 at = { 0,0,0,1 };
 vec4 up = { 0,1,0,0 };
 
-GLint lDOneLocation, lAOneLocation, lSOneLocation, lPOneLocation; 
+GLint lDOneLocation, lAOneLocation, lSOneLocation, lPOneLocation;
 GLint lDTwoLocation, lATwoLocation, lSTwoLocation, lPTwoLocation;
 
 GLint shininessLocation;
@@ -72,9 +72,9 @@ GLint mDLocation, mALocation, mSLocation;
 
 vec4 eye = { 5,15, -10,1 };
 
-enum drawStates {WAIT, MOVE, PLACE};
-enum tetrisPiece {O, L, J, I, S, T, Z};
-enum solidChoice {Cube, Tetra, Octa, Dodeca};
+enum drawStates { WAIT, MOVE, PLACE };
+enum tetrisPiece { O, L, J, I, S, T, Z };
+enum solidChoice { Cube, Tetra, Octa, Dodeca };
 
 typedef vec4 color4;
 typedef vec4 point4;
@@ -266,9 +266,9 @@ void octahedron(string startKey, string endKey, point4 buffer) {
 
 drawStates inputState = WAIT;
 //----------------------------------------------------------------------------
-/* This function initializes an array of 3d vectors 
-   and sends it to the graphics card along with shaders
-   properly connected to them.
+/* This function initializes an array of 3d vectors
+and sends it to the graphics card along with shaders
+properly connected to them.
 */
 
 void initializeBufferObjects() {
@@ -331,7 +331,7 @@ void getLightLocationShaderIndices() {
 }
 
 void
-init( void )
+init(void)
 {
 	colorcube("cube_start", "cube_end", point4(-1.5, 0.0, 0.0, 0.0));
 	tetrahedron("tetra_start", "tetra_end", point4(1.5, 0.0, 0.0, 0.0));
@@ -344,7 +344,7 @@ init( void )
 	initializeAttribPointers(program1);
 	getLightLocationShaderIndices();
 
-	glClearColor( 0.5, 0.5, 0.5, 1.0 ); // gray background
+	glClearColor(0.5, 0.5, 0.5, 1.0); // gray background
 	glPolygonMode(GL_FRONT, GL_FILL);
 	glShadeModel(GL_FLAT);
 	glEnable(GL_DEPTH_TEST);
@@ -407,15 +407,19 @@ void setupTriangleAndEnvironment(GLuint inProgram, mat4 translate, solidChoice c
 	drawSpecificTriangle(choice);
 }
 
+float rotationMovementOnRight() {
+	return stopMovementOnRight == false ? rotation : 0.0;
+}
+
 //----------------------------------------------------------------------------
 /* This function handles the display and it is automatically called by GLUT
-   once it is declared as the display function. The application should not
-   call it directly.
+once it is declared as the display function. The application should not
+call it directly.
 */
 
 void setupViewports(mat4 translate, mat4 camera, GLuint inProgram) {
 
-	glViewport(0, 0, width/2 - 10, height);
+	glViewport(0, 0, width / 2 - 10, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// clear the window
 	modelViewLocation = glGetUniformLocation(program, "ModelView");
@@ -436,17 +440,16 @@ void setupViewports(mat4 translate, mat4 camera, GLuint inProgram) {
 		vec4 at = { 0,0,0,1 };
 		vec4 up = { 0,1,0,0 };
 		vec4 eye = { 5,15, -10,1 };
-		rotation = 0.0;
 		camera = LookAt(eye, at, up);
 	}
 	else {
 		camera = LookAt(eye, at, up);
 	}
 
-	glViewport(width/2 + 10, 0, width/2 + 10, height);
+	glViewport(width / 2 + 10, 0, width / 2 + 10, height);
 	modelViewLocation = glGetUniformLocation(program, "ModelView");
 	projectionLocation = glGetUniformLocation(program, "Projection");
-	modelView = RotateZ(rotation) * RotateX(rotation * 2) * RotateY(rotation * 3);
+	modelView = RotateZ(rotationMovementOnRight()) * RotateX(rotationMovementOnRight() * 2) * RotateY(rotationMovementOnRight() * 3);
 	//vec4 eye = { 0,0,-5,1 };
 	projection = Perspective(30, 1.0, 0.3, 20.0) * camera;
 	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, translate * modelView);
@@ -460,11 +463,11 @@ void setupViewports(mat4 translate, mat4 camera, GLuint inProgram) {
 }
 
 void
-display( void )
+display(void)
 {
 	mat4 camera = LookAt(eye, at, up);
 	setupViewports(Translate(1.0, 1.0, 1.0), camera, program);
-	
+
 	// flush the buffer
 	glutSwapBuffers();
 }
@@ -480,18 +483,18 @@ idle()
 }
 
 //----------------------------------------------------------------------------
-/* This function handles the keyboard and it is called by GLUT once it is 
-   declared as the keyboard function. The application should not call it
-   directly.
+/* This function handles the keyboard and it is called by GLUT once it is
+declared as the keyboard function. The application should not call it
+directly.
 */
 
 void
-keyboard( unsigned char key, int x, int y )
+keyboard(unsigned char key, int x, int y)
 {
-    switch ( key ) {
-    case 033:					// escape key
-        exit( EXIT_SUCCESS );	// terminates the program
-        break;
+	switch (key) {
+	case 033:					// escape key
+		exit(EXIT_SUCCESS);	// terminates the program
+		break;
 	case 'l':
 		if (secondLightOn) {
 			lightTwoDiffuse = vec4(0.0, 0.0, 0.0, 1.0);
@@ -541,18 +544,18 @@ keyboard( unsigned char key, int x, int y )
 
 void specialInput(int key, int x, int y) {
 	switch (key) {
-		case GLUT_KEY_UP:
-			at.y += 0.1;
-			break;
-		case GLUT_KEY_DOWN:
-			at.y -= 0.1;
-			break;
-		case GLUT_KEY_RIGHT:
-			at.x += 0.1;
-			break;
-		case GLUT_KEY_LEFT:
-			at.x -= 0.1;
-			break;
+	case GLUT_KEY_UP:
+		at.y += 0.1;
+		break;
+	case GLUT_KEY_DOWN:
+		at.y -= 0.1;
+		break;
+	case GLUT_KEY_RIGHT:
+		at.x += 0.1;
+		break;
+	case GLUT_KEY_LEFT:
+		at.x -= 0.1;
+		break;
 	}
 }
 
@@ -627,35 +630,35 @@ createMenu()
 
 //----------------------------------------------------------------------------
 /* This is the main function that calls all the functions to initialize
-   and setup the OpenGL environment through GLUT and GLEW.
+and setup the OpenGL environment through GLUT and GLEW.
 */
 
 int
-main( int argc, char **argv )
+main(int argc, char **argv)
 {
 	// Initialize GLUT
-    glutInit( &argc, argv );
+	glutInit(&argc, argv);
 	// Initialize the display mode to a buffer with Red, Green, Blue and Alpha channels
-    glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA  | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	// Set the window size
-    glutInitWindowSize( width, height );
+	glutInitWindowSize(width, height);
 	// Here you set the OpenGL version
-    glutInitContextVersion( 3, 2 );
+	glutInitContextVersion(3, 2);
 	//Use only one of the next two lines
-    //glutInitContextProfile( GLUT_CORE_PROFILE );
-	glutInitContextProfile( GLUT_COMPATIBILITY_PROFILE );
-    glutCreateWindow( "Simple GLSL example" );
+	//glutInitContextProfile( GLUT_CORE_PROFILE );
+	glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
+	glutCreateWindow("Simple GLSL example");
 
-    // Uncomment if you are using GLEW
-	glewInit(); 
+	// Uncomment if you are using GLEW
+	glewInit();
 
-    // initialize the array and send it to the graphics card
+	// initialize the array and send it to the graphics card
 	init();
 
-    // provide the function that handles the display
-	glutDisplayFunc( display );
+	// provide the function that handles the display
+	glutDisplayFunc(display);
 	// provide the functions that handles the keyboard
-    glutKeyboardFunc( keyboard );
+	glutKeyboardFunc(keyboard);
 	// create menug
 	//createMenu();
 	glutMouseFunc(mouse);
@@ -663,7 +666,7 @@ main( int argc, char **argv )
 	glutSpecialFunc(specialInput);
 	glutIdleFunc(idle);
 
-    // Wait for input from the user (the only meaningful input is the key escape)
+	// Wait for input from the user (the only meaningful input is the key escape)
 	glutMainLoop();
-    return 0;
+	return 0;
 }
