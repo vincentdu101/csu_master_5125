@@ -25,6 +25,7 @@ GLfloat width = 1024;
 GLfloat height = 768;
 
 bool secondLightOn = true;
+bool stopMovementOnRight = false;
 
 // light information
 vec4 lightOneDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
@@ -38,8 +39,8 @@ vec4 lightTwoSpecular = vec4(1.0, 1.0, 1.0, 1.0);
 vec4 lightTwoPosition = vec4(3.0, 0.0, 3.0, 1.0);
 
 // material information
-vec4 materialDodDiffuse = vec4(0.07568, 0.61424, 0.07568, 1.0);
-vec4 materialDodAmbient = vec4(0.0215, 0.1745, 0.0215, 1.0);
+vec4 materialDodDiffuse = vec4(0.27568, 0.61424, 0.07568, 1.0);
+vec4 materialDodAmbient = vec4(0.0215, 0.5745, 0.5215, 1.0);
 vec4 materialDodSpecular = vec4(0.633, 0.727811, 0.633, 1.0);
 
 vec4 materialCubeDiffuse = vec4(1.0, 0.5, 1.0, 1.0);
@@ -69,8 +70,7 @@ GLint lDTwoLocation, lATwoLocation, lSTwoLocation, lPTwoLocation;
 GLint shininessLocation;
 GLint mDLocation, mALocation, mSLocation;
 
-vec4 eye = { 0,0,-10,1 };
-vec4 eyeP1 = { 0,0,-10,1 };
+vec4 eye = { 5,15, -10,1 };
 
 enum drawStates {WAIT, MOVE, PLACE};
 enum tetrisPiece {O, L, J, I, S, T, Z};
@@ -145,10 +145,9 @@ map<string, int> solidIndex;
 
 // quad generates two triangles for each face and assigns colors
 //    to the vertices
-void quad(int a, int b, int c, int d)
+void quad(int a, int b, int c, int d, point4 buffer)
 {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
-	point4 buffer = point4(-1.5, 0.0, 0.0, 0.0);
 	//printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
 	// one triangle
 	colors[Index] = vertex_colors[a]; points[Index] = vertices[a] + buffer; normals[Index] = normal; Index++;
@@ -163,10 +162,9 @@ void quad(int a, int b, int c, int d)
 
 // triangle generates one triangles for each face and assigns colors
 //    to the vertices
-void triangle(int a, int b, int c)
+void triangle(int a, int b, int c, point4 buffer)
 {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
-	point4 buffer = point4(1.5, 0.0, 0.0, 0.0);
 	//printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
 	// one triangle
 	colors[Index] = vertex_colors[a]; points[Index] = vertices[a] + buffer; normals[Index] = normal; Index++;
@@ -174,9 +172,8 @@ void triangle(int a, int b, int c)
 	colors[Index] = vertex_colors[c]; points[Index] = vertices[c] + buffer; normals[Index] = normal; Index++;
 }
 
-void hexagon(int a, int b, int c, int d, int e) {
+void hexagon(int a, int b, int c, int d, int e, point4 buffer) {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
-	point4 buffer = point4(1.5, 2.5, 0.0, 0.0);
 	// one triangle
 	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a] + buffer; normals[Index] = normal; Index++;
 	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; Index++;
@@ -203,9 +200,8 @@ void hexagon(int a, int b, int c, int d, int e) {
 	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; Index++;
 }
 
-void octaTriangle(int a, int b, int c) {
+void octaTriangle(int a, int b, int c, point4 buffer) {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
-	point4 buffer = point4(-1.5, 1.5, 0.0, 0.0);
 	//printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
 	// one triangle
 	colors[Index] = vertex_colors[a]; points[Index] = octaVertices[a] + buffer; normals[Index] = normal; Index++;
@@ -215,57 +211,57 @@ void octaTriangle(int a, int b, int c) {
 
 // generate 12 triangles: 36 vertices and 36 colors
 void
-colorcube()
+colorcube(string startKey, string endKey, point4 buffer)
 {
 	// each integer number represents a point in space
 	// by listing all four of them we make a square
-	solidIndex.insert(pair<string, int>("cube_start", Index));
-	quad(1, 0, 3, 2);
-	quad(2, 3, 7, 6);
-	quad(3, 0, 4, 7);
-	quad(6, 5, 1, 2);
-	quad(4, 5, 6, 7);
-	quad(5, 4, 0, 1);
-	solidIndex.insert(pair<string, int>("cube_end", Index));
+	solidIndex.insert(pair<string, int>(startKey, Index));
+	quad(1, 0, 3, 2, buffer);
+	quad(2, 3, 7, 6, buffer);
+	quad(3, 0, 4, 7, buffer);
+	quad(6, 5, 1, 2, buffer);
+	quad(4, 5, 6, 7, buffer);
+	quad(5, 4, 0, 1, buffer);
+	solidIndex.insert(pair<string, int>(endKey, Index));
 }
 
-void tetrahedron() {
-	solidIndex.insert(pair<string, int>("tetra_start", Index));
-	triangle(1, 6, 3);
-	triangle(3, 4, 1);
-	triangle(4, 6, 3);
-	triangle(6, 4, 1);
-	solidIndex.insert(pair<string, int>("tetra_end", Index));
+void tetrahedron(string startKey, string endKey, point4 buffer) {
+	solidIndex.insert(pair<string, int>(startKey, Index));
+	triangle(1, 6, 3, buffer);
+	triangle(3, 4, 1, buffer);
+	triangle(4, 6, 3, buffer);
+	triangle(6, 4, 1, buffer);
+	solidIndex.insert(pair<string, int>(endKey, Index));
 }
 
-void dodecahedron() {
-	solidIndex.insert(pair<string, int>("dode_start", Index));
-	hexagon(0, 1, 2, 3, 4);
-	hexagon(0, 1, 6, 10, 5);
-	hexagon(1, 2, 7, 11, 6);
-	hexagon(2, 3, 8, 12, 7);
-	hexagon(3, 4, 9, 13, 8);
-	hexagon(4, 0, 5, 14, 9);
-	hexagon(15, 16, 11, 6, 10);
-	hexagon(16, 17, 12, 7, 11);
-	hexagon(17, 18, 13, 8, 12);
-	hexagon(18, 19, 14, 9, 13);
-	hexagon(19, 15, 10, 5, 14);
-	hexagon(15, 16, 17, 18, 19);
-	solidIndex.insert(pair<string, int>("dode_end", Index));
+void dodecahedron(string startKey, string endKey, point4 buffer) {
+	solidIndex.insert(pair<string, int>(startKey, Index));
+	hexagon(0, 1, 2, 3, 4, buffer);
+	hexagon(0, 1, 6, 10, 5, buffer);
+	hexagon(1, 2, 7, 11, 6, buffer);
+	hexagon(2, 3, 8, 12, 7, buffer);
+	hexagon(3, 4, 9, 13, 8, buffer);
+	hexagon(4, 0, 5, 14, 9, buffer);
+	hexagon(15, 16, 11, 6, 10, buffer);
+	hexagon(16, 17, 12, 7, 11, buffer);
+	hexagon(17, 18, 13, 8, 12, buffer);
+	hexagon(18, 19, 14, 9, 13, buffer);
+	hexagon(19, 15, 10, 5, 14, buffer);
+	hexagon(15, 16, 17, 18, 19, buffer);
+	solidIndex.insert(pair<string, int>(endKey, Index));
 }
 
-void octahedron() {
-	solidIndex.insert(pair<string, int>("octa_start", Index));
-	octaTriangle(0, 1, 2);
-	octaTriangle(0, 2, 3);
-	octaTriangle(0, 3, 4);
-	octaTriangle(0, 4, 1);
-	octaTriangle(5, 1, 2);
-	octaTriangle(5, 2, 3);
-	octaTriangle(5, 3, 4);
-	octaTriangle(5, 4, 1);
-	solidIndex.insert(pair<string, int>("octa_end", Index));
+void octahedron(string startKey, string endKey, point4 buffer) {
+	solidIndex.insert(pair<string, int>(startKey, Index));
+	octaTriangle(0, 1, 2, buffer);
+	octaTriangle(0, 2, 3, buffer);
+	octaTriangle(0, 3, 4, buffer);
+	octaTriangle(0, 4, 1, buffer);
+	octaTriangle(5, 1, 2, buffer);
+	octaTriangle(5, 2, 3, buffer);
+	octaTriangle(5, 3, 4, buffer);
+	octaTriangle(5, 4, 1, buffer);
+	solidIndex.insert(pair<string, int>(endKey, Index));
 }
 
 drawStates inputState = WAIT;
@@ -337,10 +333,10 @@ void getLightLocationShaderIndices() {
 void
 init( void )
 {
-	colorcube();
-	tetrahedron();
-	dodecahedron();
-	octahedron();
+	colorcube("cube_start", "cube_end", point4(-1.5, 0.0, 0.0, 0.0));
+	tetrahedron("tetra_start", "tetra_end", point4(1.5, 0.0, 0.0, 0.0));
+	dodecahedron("dode_start", "dode_end", point4(1.5, 2.5, 0.0, 0.0));
+	octahedron("octa_start", "octa_end", point4(-1.5, 1.5, 0.0, 0.0));
 
 	initializeBufferObjects();
 	initializeProgramAndShaders();
@@ -417,7 +413,9 @@ void setupTriangleAndEnvironment(GLuint inProgram, mat4 translate, solidChoice c
    call it directly.
 */
 
-void setupViewport(mat4 translate, mat4 camera, GLuint inProgram) {
+void setupViewports(mat4 translate, mat4 camera, GLuint inProgram) {
+
+	glViewport(0, 0, width/2 - 10, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// clear the window
 	modelViewLocation = glGetUniformLocation(program, "ModelView");
@@ -425,6 +423,34 @@ void setupViewport(mat4 translate, mat4 camera, GLuint inProgram) {
 	modelView = RotateZ(rotation) * RotateX(rotation * 2) * RotateY(rotation * 3);
 	//vec4 eye = { 0,0,-5,1 };
 	projection = Perspective(30, 1.0, 0.3, 20.0) * camera;
+	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, translate * modelView);
+	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
+
+	//mat4 projection = Ortho(-mag + offset, mag + offset, -mag - offset, mag - offset, mag, -mag);
+	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Cube);
+	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Tetra);
+	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Dodeca);
+	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Octa);
+
+	if (stopMovementOnRight) {
+		vec4 at = { 0,0,0,1 };
+		vec4 up = { 0,1,0,0 };
+		vec4 eye = { 5,15, -10,1 };
+		rotation = 0.0;
+		camera = LookAt(eye, at, up);
+	}
+	else {
+		camera = LookAt(eye, at, up);
+	}
+
+	glViewport(width/2 + 10, 0, width/2 + 10, height);
+	modelViewLocation = glGetUniformLocation(program, "ModelView");
+	projectionLocation = glGetUniformLocation(program, "Projection");
+	modelView = RotateZ(rotation) * RotateX(rotation * 2) * RotateY(rotation * 3);
+	//vec4 eye = { 0,0,-5,1 };
+	projection = Perspective(30, 1.0, 0.3, 20.0) * camera;
+	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, translate * modelView);
+	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
 
 	//mat4 projection = Ortho(-mag + offset, mag + offset, -mag - offset, mag - offset, mag, -mag);
 	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Cube);
@@ -437,7 +463,7 @@ void
 display( void )
 {
 	mat4 camera = LookAt(eye, at, up);
-	setupViewport(Translate(1.0, 1.0, 1.0), camera, program);
+	setupViewports(Translate(1.0, 1.0, 1.0), camera, program);
 	
 	// flush the buffer
 	glutSwapBuffers();
@@ -507,7 +533,10 @@ keyboard( unsigned char key, int x, int y )
 	case 'g':
 		mag *= 0.9;
 		break;
+	case 'z':
+		stopMovementOnRight = !stopMovementOnRight;
 	}
+
 }
 
 void specialInput(int key, int x, int y) {

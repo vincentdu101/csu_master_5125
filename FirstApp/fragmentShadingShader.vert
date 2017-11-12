@@ -1,7 +1,6 @@
 #version 150
 
 in vec4 vPosition;
-in vec4 v2Position;
 in vec4 vColor;
 in vec3 vNormal;
 
