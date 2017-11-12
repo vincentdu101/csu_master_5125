@@ -24,12 +24,12 @@ GLfloat speed = 0.001;
 GLfloat width = 1024;
 GLfloat height = 768;
 
-bool secondLightOn = false;
+bool secondLightOn = true;
 
 // light information
 vec4 lightOneDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
 vec4 lightOneAmbient = vec4(0.1, 0.1, 0.1, 1.0);
-vec4 lightOneSpecular = vec4(0.3, 0.3, 0.3, 1.0);
+vec4 lightOneSpecular = vec4(1.3, 0.3, 0.3, 1.0);
 vec4 lightOnePosition = vec4(-3.0, 0.0, 3.0, 1.0);
 
 vec4 lightTwoDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
@@ -66,13 +66,11 @@ vec4 up = { 0,1,0,0 };
 GLint lDOneLocation, lAOneLocation, lSOneLocation, lPOneLocation; 
 GLint lDTwoLocation, lATwoLocation, lSTwoLocation, lPTwoLocation;
 
-GLint lDP1OneLocation, lAP1OneLocation, lSP1OneLocation, lPP1OneLocation;
-GLint lDP1TwoLocation, lAP1TwoLocation, lSP1TwoLocation, lPP1TwoLocation;
-
 GLint shininessLocation;
 GLint mDLocation, mALocation, mSLocation;
 
 vec4 eye = { 0,0,-10,1 };
+vec4 eyeP1 = { 0,0,-10,1 };
 
 enum drawStates {WAIT, MOVE, PLACE};
 enum tetrisPiece {O, L, J, I, S, T, Z};
@@ -334,21 +332,6 @@ void getLightLocationShaderIndices() {
 	mALocation = glGetUniformLocation(program, "materialAmbient");
 	mSLocation = glGetUniformLocation(program, "materialSpecular");
 	shininessLocation = glGetUniformLocation(program, "shininess");
-
-	lDP1OneLocation = glGetUniformLocation(program1, "lightOneDiffuse");
-	lAP1OneLocation = glGetUniformLocation(program1, "lightOneAmbient");
-	lSP1OneLocation = glGetUniformLocation(program1, "lightOneSpecular");
-	lPP1OneLocation = glGetUniformLocation(program1, "lightOnePosition");
-
-	lDP1TwoLocation = glGetUniformLocation(program1, "lightTwoDiffuse");
-	lAP1TwoLocation = glGetUniformLocation(program1, "lightTwoAmbient");
-	lSP1TwoLocation = glGetUniformLocation(program1, "lightTwoSpecular");
-	lPP1TwoLocation = glGetUniformLocation(program1, "lightTwoPosition");
-
-	mDLocation = glGetUniformLocation(program1, "materialDiffuse");
-	mALocation = glGetUniformLocation(program1, "materialAmbient");
-	mSLocation = glGetUniformLocation(program1, "materialSpecular");
-	shininessLocation = glGetUniformLocation(program1, "shininess");
 }
 
 void
@@ -411,29 +394,18 @@ void drawSpecificTriangle(solidChoice choice) {
 }
 
 void setupTriangleAndEnvironment(GLuint inProgram, mat4 translate, solidChoice choice) {
-	glUseProgram(program);
+	glUseProgram(inProgram);
+
 	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, translate * modelView);
 	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
-	if (inProgram == program) {
-		glUniform4fv(lAOneLocation, 1, lightOneAmbient);
-		glUniform4fv(lDOneLocation, 1, lightOneDiffuse);
-		glUniform4fv(lSOneLocation, 1, lightOneSpecular);
-		glUniform4fv(lPOneLocation, 1, lightOnePosition);
-		glUniform4fv(lATwoLocation, 1, lightTwoAmbient);
-		glUniform4fv(lDTwoLocation, 1, lightTwoDiffuse);
-		glUniform4fv(lSTwoLocation, 1, lightTwoSpecular);
-		glUniform4fv(lPTwoLocation, 1, lightTwoPosition);
-	}
-	else {
-		glUniform4fv(lAP1OneLocation, 1, lightOneAmbient);
-		glUniform4fv(lDP1OneLocation, 1, lightOneDiffuse);
-		glUniform4fv(lSP1OneLocation, 1, lightOneSpecular);
-		glUniform4fv(lPP1OneLocation, 1, lightOnePosition);
-		glUniform4fv(lAP1TwoLocation, 1, lightTwoAmbient);
-		glUniform4fv(lDP1TwoLocation, 1, lightTwoDiffuse);
-		glUniform4fv(lSP1TwoLocation, 1, lightTwoSpecular);
-		glUniform4fv(lPP1TwoLocation, 1, lightTwoPosition);
-	}
+	glUniform4fv(lAOneLocation, 1, lightOneAmbient);
+	glUniform4fv(lDOneLocation, 1, lightOneDiffuse);
+	glUniform4fv(lSOneLocation, 1, lightOneSpecular);
+	glUniform4fv(lPOneLocation, 1, lightOnePosition);
+	glUniform4fv(lATwoLocation, 1, lightTwoAmbient);
+	glUniform4fv(lDTwoLocation, 1, lightTwoDiffuse);
+	glUniform4fv(lSTwoLocation, 1, lightTwoSpecular);
+	glUniform4fv(lPTwoLocation, 1, lightTwoPosition);
 	glUniform1f(shininessLocation, shininess);
 	setupMaterialPerSolid(choice);
 	drawSpecificTriangle(choice);
@@ -445,7 +417,7 @@ void setupTriangleAndEnvironment(GLuint inProgram, mat4 translate, solidChoice c
    call it directly.
 */
 
-void setupViewport(mat4 camera, GLuint program) {
+void setupViewport(mat4 translate, mat4 camera, GLuint inProgram) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// clear the window
 	modelViewLocation = glGetUniformLocation(program, "ModelView");
@@ -453,46 +425,19 @@ void setupViewport(mat4 camera, GLuint program) {
 	modelView = RotateZ(rotation) * RotateX(rotation * 2) * RotateY(rotation * 3);
 	//vec4 eye = { 0,0,-5,1 };
 	projection = Perspective(30, 1.0, 0.3, 20.0) * camera;
-	//mat4 camera = LookAt(eye, at, up);
+
 	//mat4 projection = Ortho(-mag + offset, mag + offset, -mag - offset, mag - offset, mag, -mag);
-	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Cube);
-	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Tetra);
-	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Dodeca);
-	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Octa);
+	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Cube);
+	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Tetra);
+	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Dodeca);
+	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Octa);
 }
 
 void
 display( void )
 {
 	mat4 camera = LookAt(eye, at, up);
-	//glViewport(0, 0, width / 2, height);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// clear the window
-	modelViewLocation = glGetUniformLocation(program, "ModelView");
-	projectionLocation = glGetUniformLocation(program, "Projection");
-	modelView = RotateZ(rotation) * RotateX(rotation * 2) * RotateY(rotation * 3);
-	//vec4 eye = { 0,0,-5,1 };
-	projection = Perspective(30, 1.0, 0.3, 20.0) * camera;
-	//mat4 camera = LookAt(eye, at, up);
-	mat4 projection = Ortho(-mag + offset, mag + offset, -mag - offset, mag - offset, mag, -mag);
-	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Cube);
-	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Tetra);
-	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Dodeca);
-	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Octa);
-	//glViewport(width / 2, 0, width / 2, height);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// clear the window
-	modelViewLocation = glGetUniformLocation(program1, "ModelView");
-	projectionLocation = glGetUniformLocation(program1, "Projection");
-	modelView = RotateZ(rotation) * RotateX(rotation * 2) * RotateY(rotation * 3);
-	//vec4 eye = { 0,0,-5,1 };
-	projection = Perspective(30, 1.0, 0.3, 20.0) * camera * projection;
-	//mat4 camera = LookAt(eye, at, up);
-	//mat4 projection = Ortho(-mag + offset, mag + offset, -mag - offset, mag - offset, mag, -mag);
-	setupTriangleAndEnvironment(program1, Translate(-2.0, 0.0, 0.0), Cube);
-	setupTriangleAndEnvironment(program1, Translate(-2.0, 0.0, 0.0), Tetra);
-	setupTriangleAndEnvironment(program1, Translate(-2.0, 0.0, 0.0), Dodeca);
-	setupTriangleAndEnvironment(program1, Translate(-2.0, 0.0, 0.0), Octa);
+	setupViewport(Translate(1.0, 1.0, 1.0), camera, program);
 	
 	// flush the buffer
 	glutSwapBuffers();
@@ -523,15 +468,15 @@ keyboard( unsigned char key, int x, int y )
         break;
 	case 'l':
 		if (secondLightOn) {
-			lightTwoDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-			lightTwoAmbient = vec4(1.0, 1.0, 1.0, 1.0);
-			lightTwoSpecular = vec4(1.0, 1.0, 1.0, 1.0);
+			lightTwoDiffuse = vec4(0.0, 0.0, 0.0, 1.0);
+			lightTwoAmbient = vec4(0.0, 0.0, 0.0, 1.0);
+			lightTwoSpecular = vec4(0.0, 0.0, 0.0, 1.0);
 			secondLightOn = false;
 		}
 		else {
-			lightOneDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-			lightOneAmbient = vec4(0.1, 0.1, 0.1, 1.0);
-			lightOneSpecular = vec4(0.3, 0.3, 0.3, 1.0);
+			lightTwoDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+			lightTwoAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+			lightTwoSpecular = vec4(1.0, 1.0, 1.0, 1.0);
 			secondLightOn = true;
 		}
 		glutPostRedisplay();
