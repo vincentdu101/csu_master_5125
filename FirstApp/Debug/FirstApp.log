@@ -15,10 +15,6 @@ c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\fir
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(34): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(35): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(36): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(78): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(79): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(80): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(81): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(82): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(83): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(84): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
@@ -35,23 +31,27 @@ c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\fir
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(95): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(96): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(97): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(421): warning C4305: 'argument': truncation from 'double' to 'const GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(455): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(456): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(499): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(503): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(508): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(513): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(518): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(521): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(529): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(530): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(531): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(549): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(550): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(551): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(568): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(574): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(605): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(98): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(99): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(100): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(101): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(411): warning C4305: 'argument': truncation from 'double' to 'const GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(433): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(434): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(477): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(481): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(486): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(491): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(496): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(499): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(507): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(508): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(509): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(527): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(528): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(529): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(546): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(552): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(583): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\Vincent Du - Assignment\Debug\FirstApp.exe
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\Vincent Du - Assignment\Debug\FirstApp.pdb (Partial PDB)

@@ -21,8 +21,8 @@ GLfloat offset = 2.0;
 
 
 GLfloat speed = 0.001;
-GLfloat width = 512;
-GLfloat height = 512;
+GLfloat width = 1024;
+GLfloat height = 768;
 
 // light information
 vec4 lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
@@ -31,9 +31,21 @@ vec4 lightSpecular = vec4(0.3, 0.3, 0.3, 1.0);
 vec4 lightPosition = vec4(-5.0, 0.0, 5.0, 1.0);
 
 // material information
-vec4 materialDiffuse = vec4(0.07568, 0.61424, 0.07568, 1.0);
-vec4 materialAmbient = vec4(0.0215, 0.1745, 0.0215, 1.0);
-vec4 materialSpecular = vec4(0.633, 0.727811, 0.633, 1.0);
+vec4 materialDodDiffuse = vec4(0.07568, 0.61424, 0.07568, 1.0);
+vec4 materialDodAmbient = vec4(0.0215, 0.1745, 0.0215, 1.0);
+vec4 materialDodSpecular = vec4(0.633, 0.727811, 0.633, 1.0);
+
+vec4 materialCubeDiffuse = vec4(1.0, 0.5, 1.0, 1.0);
+vec4 materialCubeAmbient = vec4(1.0, 0.5, 1.0, 1.0);
+vec4 materialCubeSpecular = vec4(1.0, 0.5, 1.0, 1.0);
+
+vec4 materialTetraDiffuse = vec4(1.0, 0.5, 0.0, 1.0);
+vec4 materialTetraAmbient = vec4(1.0, 0.5, 0.0, 1.0);
+vec4 materialTetraSpecular = vec4(1.0, 0.5, 0.0, 1.0);
+
+vec4 materialOctaDiffuse = vec4(1.5, 0.5, 1.0, 1.0);
+vec4 materialOctaAmbient = vec4(1.5, 0.5, 1.0, 1.0);
+vec4 materialOctaSpecular = vec4(1.5, 0.5, 1.0, 1.0);
 GLfloat shininess = 50;
 
 // drawing info
@@ -42,28 +54,20 @@ GLint projectionLocation;
 mat4 modelView;
 mat4 projection;
 
-GLint lDLocation, lALocation, lSLocation, lPLocation, mDLocation, mALocation, mSLocation, shininessLocation;
+GLint lDLocation, lALocation, lSLocation, lPLocation, shininessLocation;
+GLint mDLocation, mALocation, mSLocation;
 
 vec4 eye = { 0,0,-10,1 };
 
 enum drawStates {WAIT, MOVE, PLACE};
 enum tetrisPiece {O, L, J, I, S, T, Z};
+enum solidChoice {Cube, Tetra, Octa, Dodeca};
 
 typedef vec4 color4;
 typedef vec4 point4;
 
 // Vertices of a unit cube centered at origin, sides aligned with axes
 point4 vertices[8] = {
-	/*
-	point4(-0.5, -0.5,  0.5, 1.0),
-	point4(-0.5,  0.5,  0.5, 1.0),
-	point4(0.5,  0.5,  0.5, 1.0),
-	point4(0.5, -0.5,  0.5, 1.0),
-	point4(-0.5, -0.5, -0.5, 1.0),
-	point4(-0.5,  0.5, -0.5, 1.0),
-	point4(0.5,  0.5, -0.5, 1.0),
-	point4(0.5, -0.5, -0.5, 1.0)
-*/
 	point4(-0.5, -0.5, -0.5, 1.0),
 	point4(0.5, -0.5, -0.5, 1.0),
 	point4(0.5,  0.5, -0.5, 1.0),
@@ -123,6 +127,7 @@ color4 colors[NumPoints];
 vec3 normals[NumPoints];
 
 int Index = 0;
+map<string, int> solidIndex;
 
 
 // quad generates two triangles for each face and assigns colors
@@ -130,16 +135,17 @@ int Index = 0;
 void quad(int a, int b, int c, int d)
 {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
+	point4 buffer = point4(-1.5, 0.0, 0.0, 0.0);
 	//printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
 	// one triangle
-	colors[Index] = vertex_colors[a]; points[Index] = vertices[a]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = vertices[b]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = vertices[c]; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = vertices[a] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = vertices[b] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = vertices[c] + buffer; normals[Index] = normal; Index++;
 
 	// two triangle
-	colors[Index] = vertex_colors[a]; points[Index] = vertices[a]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = vertices[c]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[d]; points[Index] = vertices[d]; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = vertices[a] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = vertices[c] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[d]; points[Index] = vertices[d] + buffer; normals[Index] = normal; Index++;
 }
 
 // triangle generates one triangles for each face and assigns colors
@@ -147,48 +153,51 @@ void quad(int a, int b, int c, int d)
 void triangle(int a, int b, int c)
 {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
+	point4 buffer = point4(1.5, 0.0, 0.0, 0.0);
 	//printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
 	// one triangle
-	colors[Index] = vertex_colors[a]; points[Index] = vertices[a]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = vertices[b]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = vertices[c]; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = vertices[a] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = vertices[b] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = vertices[c] + buffer; normals[Index] = normal; Index++;
 }
 
 void hexagon(int a, int b, int c, int d, int e) {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
+	point4 buffer = point4(1.5, 2.5, 0.0, 0.0);
 	// one triangle
-	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = hexagonVertices[c]; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = hexagonVertices[c] + buffer; normals[Index] = normal; Index++;
 
-	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = hexagonVertices[c]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d]; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = hexagonVertices[c] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d] + buffer; normals[Index] = normal; Index++;
 
-	colors[Index] = vertex_colors[c]; points[Index] = hexagonVertices[c]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e]; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = hexagonVertices[c] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; Index++;
 
-	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e]; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; Index++;
 
-	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e]; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; Index++;
 
-	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e]; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; Index++;
 }
 
 void octaTriangle(int a, int b, int c) {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
+	point4 buffer = point4(-1.5, 1.5, 0.0, 0.0);
 	//printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
 	// one triangle
-	colors[Index] = vertex_colors[a]; points[Index] = octaVertices[a]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = octaVertices[b]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = octaVertices[c]; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = octaVertices[a] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = octaVertices[b] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = octaVertices[c] + buffer; normals[Index] = normal; Index++;
 }
 
 // generate 12 triangles: 36 vertices and 36 colors
@@ -197,22 +206,27 @@ colorcube()
 {
 	// each integer number represents a point in space
 	// by listing all four of them we make a square
+	solidIndex.insert(pair<string, int>("cube_start", Index));
 	quad(1, 0, 3, 2);
 	quad(2, 3, 7, 6);
 	quad(3, 0, 4, 7);
 	quad(6, 5, 1, 2);
 	quad(4, 5, 6, 7);
 	quad(5, 4, 0, 1);
+	solidIndex.insert(pair<string, int>("cube_end", Index));
 }
 
 void tetrahedron() {
+	solidIndex.insert(pair<string, int>("tetra_start", Index));
 	triangle(1, 6, 3);
 	triangle(3, 4, 1);
 	triangle(4, 6, 3);
 	triangle(6, 4, 1);
+	solidIndex.insert(pair<string, int>("tetra_end", Index));
 }
 
 void dodecahedron() {
+	solidIndex.insert(pair<string, int>("dode_start", Index));
 	hexagon(0, 1, 2, 3, 4);
 	hexagon(0, 1, 6, 10, 5);
 	hexagon(1, 2, 7, 11, 6);
@@ -224,9 +238,12 @@ void dodecahedron() {
 	hexagon(17, 18, 13, 8, 12);
 	hexagon(18, 19, 14, 9, 13);
 	hexagon(19, 15, 10, 5, 14);
+	hexagon(15, 16, 17, 18, 19);
+	solidIndex.insert(pair<string, int>("dode_end", Index));
 }
 
 void octahedron() {
+	solidIndex.insert(pair<string, int>("octa_start", Index));
 	octaTriangle(0, 1, 2);
 	octaTriangle(0, 2, 3);
 	octaTriangle(0, 3, 4);
@@ -235,124 +252,47 @@ void octahedron() {
 	octaTriangle(5, 2, 3);
 	octaTriangle(5, 3, 4);
 	octaTriangle(5, 4, 1);
+	solidIndex.insert(pair<string, int>("octa_end", Index));
 }
 
 drawStates inputState = WAIT;
-
-class Shape {
-public:
-	vec2 position;
-	GLfloat scale;
-	GLfloat rotation;
-	vec4 color;
-	tetrisPiece piece;
-
-	Shape(tetrisPiece newPiece);
-	void draw();
-};
-
-Shape::Shape(tetrisPiece newPiece)
-{
-	position = vec2(0.0, 0.0);
-	scale = 1.0;
-	rotation = 0.0;
-	color = vec4(1, 1, 1, 1);
-	piece = O;
-}
-
-void Shape::draw() {
-	GLint uColorLocation = glGetUniformLocation(program, "uColor");
-	//vec4 theColor = vec4(1.0, 0.0, 0.0, 1.0);
-	glUniform4fv(uColorLocation, 1, color);
-	GLint modelViewLocation = glGetUniformLocation(program, "ModelView");
-	printf("location %i\n", modelViewLocation);
-	mat4 modelView = Translate(position.x, position.y, 0.0) * RotateZ(rotation) * Scale(scale);
-	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, modelView);
-	glDrawArrays(GL_TRIANGLES, 0, 3);    // draw the points
-}
-
-
-Shape *currentShape;// = new Shape(O);
-
 //----------------------------------------------------------------------------
 /* This function initializes an array of 3d vectors 
    and sends it to the graphics card along with shaders
    properly connected to them.
 */
 
-void
-init( void )
-{
-	/*
-    // Specifiy the vertices for a triangle
-	vec4 vertices[] = {
-		vec4( -1.0/2, -1.0/2, 0.0, 1.0 ),
-		vec4(  0.0,  1.0/2, 0.0, 1.0 ),
-		vec4(  1.0/2, -1.0/2, 0.0, 1.0 )
-	};
-
-    // Select an arbitrary initial point inside of the triangle
-    points[0] = vec4( 0.0, 0.0, 0.0, 1.0 );
-
-    // compute and store NumPoints - 1 new points
-    for ( int i = 1; i < NumPoints; ++i ) {
-        int j = rand() % 3;   // pick a vertex from the triangle at random
-
-        // Compute the point halfway between the selected vertex
-        //   and the previous point
-        points[i] = ( points[i - 1] + vertices[j] ) / 2.0;
-    }
-	points[0] = vertices[0];
-	points[1] = vertices[1];
-	points[2] = vertices[2];
-	colors[0] = vec3(1.0, 0.0, 0.0);
-	colors[1] = colors[0];
-	colors[2] = colors[0];
-
-	//points[3] = vertices[0] + vec3(0.0, 0.5, 0.0);
-	//points[4] = vertices[1] + vec3(0.0, 0.5, 0.0);
-	//points[5] = vertices[2] + vec3(0.0, 0.5, 0.0);
-	//colors[3] = vec3(0.0, 1.0, 0.0);
-	//colors[4] = colors[0];
-	//colors[5] = colors[3];
-
-	mat4 rotationZ = RotateZ(30);
-	//points[0] = rotationZ * points[0];
-	//points[1] = rotationZ * points[1];
-	//points[2] = rotationZ * points[2];
-	*/
-
-	//colorcube();
-	//tetrahedron();
-	//dodecahedron();
-	octahedron();
-
+void initializeBufferObjects() {
 	// Create a vertex array object
-    GLuint vao;
-    glGenVertexArrays( 1, &vao );
-    glBindVertexArray( vao );
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 
-    // Create and initialize a buffer object
-    GLuint buffer;
-    glGenBuffers( 1, &buffer );
-    glBindBuffer( GL_ARRAY_BUFFER, buffer );
-    //glBufferData( GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW );
+	// Create and initialize a buffer object
+	GLuint buffer;
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	//glBufferData( GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW );
 	glBufferData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors) + sizeof(normals), NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(colors), colors);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors), sizeof(normals), normals);
+}
 
-    // Load shaders and use the resulting shader program
-    program1 = InitShader( "fragmentShadingShader.vert", "fragmentShadingShader.frag" );
+void initializeProgramAndShaders() {
+	// Load shaders and use the resulting shader program
+	program1 = InitShader("fragmentShadingShader.vert", "fragmentShadingShader.frag");
 	program = InitShader("fragmentShadingShader.vert", "fragmentShadingShader.frag");
 	// make these shaders the current shaders
-    glUseProgram( program );
+	glUseProgram(program);
 	currentProgram = program;
+}
 
-    // Initialize the vertex position attribute from the vertex shader
-    GLuint loc = glGetAttribLocation( program, "vPosition" );
-    glEnableVertexAttribArray( loc );
-    glVertexAttribPointer( loc, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0) );
+void initializeAttribPointers() {
+	// Initialize the vertex position attribute from the vertex shader
+	GLuint loc = glGetAttribLocation(program, "vPosition");
+	glEnableVertexAttribArray(loc);
+	glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 	// Initialize the vertex color attribute from the vertex shader
 	GLuint loc1 = glGetAttribLocation(program, "vColor");
@@ -362,18 +302,32 @@ init( void )
 	GLuint loc2 = glGetAttribLocation(program, "vNormal");
 	glEnableVertexAttribArray(loc2);
 	glVertexAttribPointer(loc2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET((sizeof(points) + sizeof(colors))));
+}
 
+void getLightLocationShaderIndices() {
 	lDLocation = glGetUniformLocation(program, "lightDiffuse");
 	lALocation = glGetUniformLocation(program, "lightAmbient");
 	lSLocation = glGetUniformLocation(program, "lightSpecular");
 	lPLocation = glGetUniformLocation(program, "lightPosition");
+}
+
+void
+init( void )
+{
+	colorcube();
+	tetrahedron();
+	dodecahedron();
+	octahedron();
+
+	initializeBufferObjects();
+	initializeProgramAndShaders();
+	initializeAttribPointers();
+	getLightLocationShaderIndices();
 
 	mDLocation = glGetUniformLocation(program, "materialDiffuse");
 	mALocation = glGetUniformLocation(program, "materialAmbient");
 	mSLocation = glGetUniformLocation(program, "materialSpecular");
 	shininessLocation = glGetUniformLocation(program, "shininess");
-
-
 
 	glClearColor( 0.5, 0.5, 0.5, 1.0 ); // gray background
 	glPolygonMode(GL_FRONT, GL_FILL);
@@ -382,7 +336,45 @@ init( void )
 
 }
 
-void setupTriangleAndEnvironment(GLuint program, mat4 translate) {
+void setupMaterialPerSolid(solidChoice choice) {
+	if (choice == Cube) {
+		glUniform4fv(mALocation, 1, materialCubeAmbient);
+		glUniform4fv(mDLocation, 1, materialCubeDiffuse);
+		glUniform4fv(mSLocation, 1, materialCubeSpecular);
+	}
+	else if (choice == Tetra) {
+		glUniform4fv(mALocation, 1, materialTetraAmbient);
+		glUniform4fv(mDLocation, 1, materialTetraDiffuse);
+		glUniform4fv(mSLocation, 1, materialTetraSpecular);
+	}
+	else if (choice == Octa) {
+		glUniform4fv(mALocation, 1, materialOctaAmbient);
+		glUniform4fv(mDLocation, 1, materialOctaDiffuse);
+		glUniform4fv(mSLocation, 1, materialOctaSpecular);
+	}
+	else if (choice == Dodeca) {
+		glUniform4fv(mALocation, 1, materialDodAmbient);
+		glUniform4fv(mDLocation, 1, materialDodDiffuse);
+		glUniform4fv(mSLocation, 1, materialDodSpecular);
+	}
+}
+
+void drawSpecificTriangle(solidChoice choice) {
+	if (choice == Cube) {
+		glDrawArrays(GL_TRIANGLES, solidIndex.at("cube_start"), solidIndex.at("cube_end"));
+	}
+	else if (choice == Tetra) {
+		glDrawArrays(GL_TRIANGLES, solidIndex.at("tetra_start"), solidIndex.at("tetra_end"));
+	}
+	else if (choice == Dodeca) {
+		glDrawArrays(GL_TRIANGLES, solidIndex.at("dode_start"), solidIndex.at("dode_end"));
+	}
+	else if (choice == Octa) {
+		glDrawArrays(GL_TRIANGLES, solidIndex.at("octa_start"), solidIndex.at("octa_end"));
+	}
+}
+
+void setupTriangleAndEnvironment(GLuint program, mat4 translate, solidChoice choice) {
 	glUseProgram(program);
 	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, translate * modelView);
 	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
@@ -390,11 +382,9 @@ void setupTriangleAndEnvironment(GLuint program, mat4 translate) {
 	glUniform4fv(lDLocation, 1, lightDiffuse);
 	glUniform4fv(lSLocation, 1, lightSpecular);
 	glUniform4fv(lPLocation, 1, lightPosition);
-	glUniform4fv(mALocation, 1, materialAmbient);
-	glUniform4fv(mDLocation, 1, materialDiffuse);
-	glUniform4fv(mSLocation, 1, materialSpecular);
 	glUniform1f(shininessLocation, shininess);
-	glDrawArrays(GL_TRIANGLES, 0, NumPoints);
+	setupMaterialPerSolid(choice);
+	drawSpecificTriangle(choice);
 }
 
 //----------------------------------------------------------------------------
@@ -421,29 +411,17 @@ display( void )
 	projection = Perspective(30, 1.0, 0.3, 20.0) * LookAt(eye, at, up);
 	//mat4 camera = LookAt(eye, at, up);
 	//mat4 projection = Ortho(-mag + offset, mag + offset, -mag - offset, mag - offset, mag, -mag);
-	setupTriangleAndEnvironment(program, Translate(-1.0, 0.0, 0.0));
-	setupTriangleAndEnvironment(program1, Translate(1.0, 0.0, 0.0));
+	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Cube);
+	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Tetra);
+	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Dodeca);
+	setupTriangleAndEnvironment(program, Translate(-2.0, 0.0, 0.0), Octa);
 
-/*
-	switch (inputState)
-	{
-	case WAIT:
-		break;
-	case MOVE:
-	case PLACE:
-
-		GLint uColorLocation = glGetUniformLocation(program, "uColor");
-		vec4 theColor = vec4(1.0, 0.0, 0.0, 1.0);
-		glUniform4fv(uColorLocation, 1, theColor);
-		modelViewLocation = glGetUniformLocation(program, "ModelView");
-		printf("location %i\n", modelViewLocation);
-		modelView = Translate(offsetx, offsety, 0.0) * RotateZ(rotation) * Scale(scale);
-		glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, modelView);
-		glDrawArrays(GL_TRIANGLES, 0, 3);    // draw the points
-		break;
-	}
-	*/
-	//glFlush();									// flush the buffer
+	setupTriangleAndEnvironment(program1, Translate(2.0, 0.0, 0.0), Cube);
+	setupTriangleAndEnvironment(program1, Translate(2.0, 0.0, 0.0), Tetra);
+	setupTriangleAndEnvironment(program1, Translate(2.0, 0.0, 0.0), Dodeca);
+	setupTriangleAndEnvironment(program1, Translate(2.0, 0.0, 0.0), Octa);
+	
+	// flush the buffer
 	glutSwapBuffers();
 }
 
