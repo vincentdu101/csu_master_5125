@@ -16,6 +16,8 @@ uniform vec4 materialAmbient;
 uniform vec4 materialSpecular;
 uniform float shininess;
 
+uniform sampler2D texture;
+
 vec4
 computeTexture(vec2 coord)
 {
@@ -53,12 +55,12 @@ main()
 	vec3 L = normalize(fL);
 
 	vec3 H = normalize(L + E);
-	vec4 ambient = lightAmbient * materialAmbient;
+	vec4 ambient = lightAmbient * texture2D(texture, fTexCoord);
 	float Kd = max(dot(L, N), 0.0);
-	vec4 diffuse = Kd * lightDiffuse * materialDiffuse * computeTexture(fTexCoord);
-	diffuse = Kd * lightDiffuse * computeCircle(fTexCoord);
+	vec4 diffuse = Kd * lightDiffuse * texture2D(texture, fTexCoord);//computeTexture(fTexCoord);
+	//diffuse = Kd * lightDiffuse * computeCircle(fTexCoord);
 	float Ks = pow(max(dot(N, H),0.0), shininess);
-	vec4 specular = Ks * lightSpecular * materialSpecular;
+	vec4 specular = Ks * lightSpecular * texture2D(texture, fTexCoord);
 	if(dot(L, N) < 0.0)
 	{
 		specular = vec4(0.0, 0.0, 0.0, 1.0);
