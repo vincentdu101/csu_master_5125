@@ -49,5 +49,11 @@
     <None Include="vertexShadingShader.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="fragmentShadingShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fragmentShadingShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -2,8 +2,10 @@
 
 #include "Angel.h"
 
-const int NumPoints = 24;
+const int NumPoints = 36;
 GLuint program = 0;
+GLuint program1 = 0;
+GLuint currentProgram = 0;
 GLfloat radians = 0.0;
 
 GLfloat offsety = 0.0;
@@ -18,6 +20,22 @@ GLfloat offset = 2.0;
 GLfloat speed = 0.001;
 GLfloat width = 512;
 GLfloat height = 512;
+
+// light information
+vec4 lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+vec4 lightAmbient = vec4(0.1, 0.1, 0.1, 1.0);
+vec4 lightSpecular = vec4(0.3, 0.3, 0.3, 1.0);
+vec4 lightPosition = vec4(-5.0, 0.0, 5.0, 1.0);
+
+// material information
+vec4 materialDiffuse = vec4(0.07568, 0.61424, 0.07568, 1.0);
+vec4 materialAmbient = vec4(0.0215, 0.1745, 0.0215, 1.0);
+vec4 materialSpecular = vec4(0.633, 0.727811, 0.633, 1.0);
+GLfloat shininess = 50;
+
+GLint lDLocation, lALocation, lSLocation, lPLocation, mDLocation, mALocation, mSLocation, shininessLocation;
+
+vec4 eye = { 0,0,-10,1 };
 
 enum drawStates {WAIT, MOVE, PLACE};
 enum tetrisPiece {O, L, J, I, S, T, Z};
@@ -70,7 +88,7 @@ int Index = 0;
 void quad(int a, int b, int c, int d)
 {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
-	printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
+	//printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
 	colors[Index] = vertex_colors[a]; points[Index] = vertices[a]; normals[Index] = normal; Index++;
 	colors[Index] = vertex_colors[b]; points[Index] = vertices[b]; normals[Index] = normal; Index++;
 	colors[Index] = vertex_colors[c]; points[Index] = vertices[c]; normals[Index] = normal; Index++;
@@ -195,9 +213,11 @@ init( void )
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors), sizeof(normals), normals);
 
     // Load shaders and use the resulting shader program
-    program = InitShader( "vertexShadingShader.vert", "vertexShadingShader.frag" );
+    program1 = InitShader( "vertexShadingShader.vert", "vertexShadingShader.frag" );
+	program = InitShader("fragmentShadingShader.vert", "fragmentShadingShader.frag");
 	// make these shaders the current shaders
     glUseProgram( program );
+	currentProgram = program;
 
     // Initialize the vertex position attribute from the vertex shader
     GLuint loc = glGetAttribLocation( program, "vPosition" );
@@ -212,6 +232,18 @@ init( void )
 	GLuint loc2 = glGetAttribLocation(program, "vNormal");
 	glEnableVertexAttribArray(loc2);
 	glVertexAttribPointer(loc2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET((sizeof(points) + sizeof(colors))));
+
+	lDLocation = glGetUniformLocation(program, "lightDiffuse");
+	lALocation = glGetUniformLocation(program, "lightAmbient");
+	lSLocation = glGetUniformLocation(program, "lightSpecular");
+	lPLocation = glGetUniformLocation(program, "lightPosition");
+
+	mDLocation = glGetUniformLocation(program, "materialDiffuse");
+	mALocation = glGetUniformLocation(program, "materialAmbient");
+	mSLocation = glGetUniformLocation(program, "materialSpecular");
+	shininessLocation = glGetUniformLocation(program, "shininess");
+
+
 
 	glClearColor( 0.5, 0.5, 0.5, 1.0 ); // gray background
 	glPolygonMode(GL_FRONT, GL_FILL);
@@ -236,15 +268,41 @@ display( void )
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// clear the window
 	GLint modelViewLocation = glGetUniformLocation(program, "ModelView");
+	GLint projectionLocation = glGetUniformLocation(program, "Projection");
 	mat4 modelView = RotateZ(rotation) * RotateX(rotation * 2) * RotateY(rotation * 3);
-	vec4 eye = { 0,0,-5,1 };
+	//vec4 eye = { 0,0,-5,1 };
 	vec4 at = { 0,0,0,1 };
 	vec4 up = { 0,1,0,0 };
-	mat4 projection = Perspective(30, 1.0, 0.3, 20.0);
-	mat4 camera = LookAt(eye, at, up);
+	mat4 projection = Perspective(30, 1.0, 0.3, 20.0) * LookAt(eye, at, up);
+	//mat4 camera = LookAt(eye, at, up);
 	//mat4 projection = Ortho(-mag + offset, mag + offset, -mag - offset, mag - offset, mag, -mag);
-	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, projection * camera * modelView );
+	glUseProgram(program);
+	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, Translate(-1.0, 0.0, 0.0) * modelView );
+	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
+	glUniform4fv(lALocation, 1, lightAmbient);
+	glUniform4fv(lDLocation, 1, lightDiffuse);
+	glUniform4fv(lSLocation, 1, lightSpecular);
+	glUniform4fv(lPLocation, 1, lightPosition);
+	glUniform4fv(mALocation, 1, materialAmbient);
+	glUniform4fv(mDLocation, 1, materialDiffuse);
+	glUniform4fv(mSLocation, 1, materialSpecular);
+	glUniform1f(shininessLocation, shininess);
 	glDrawArrays(GL_TRIANGLES, 0, NumPoints);
+
+	glUseProgram(program1);
+	//modelView =  Translate(1.5, 0.0, 0.0) * modelView;
+	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, Translate(1.0, 0.0, 0.0) * modelView);
+	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
+	glUniform4fv(lALocation, 1, lightAmbient);
+	glUniform4fv(lDLocation, 1, lightDiffuse);
+	glUniform4fv(lSLocation, 1, lightSpecular);
+	glUniform4fv(lPLocation, 1, lightPosition);
+	glUniform4fv(mALocation, 1, materialAmbient);
+	glUniform4fv(mDLocation, 1, materialDiffuse);
+	glUniform4fv(mSLocation, 1, materialSpecular);
+	glUniform1f(shininessLocation, shininess);
+	glDrawArrays(GL_TRIANGLES, 0, NumPoints);
+
 /*
 	switch (inputState)
 	{
@@ -271,6 +329,7 @@ display( void )
 void
 idle()
 {
+	//lightPosition.y -= 0.01;
 	rotation += speed;
 	offsety = cos(radians) * 0.5;
 	offsetx = sin(radians) * 1.2;
@@ -292,6 +351,13 @@ keyboard( unsigned char key, int x, int y )
         exit( EXIT_SUCCESS );	// terminates the program
         break;
 	case 'p':
+		if (currentProgram == program) {
+			currentProgram = program1;
+		}
+		else {
+			currentProgram = program;
+		}
+		/*
 		if (inputState == WAIT)
 		{
 			width = glutGet(GLUT_WINDOW_WIDTH);
@@ -305,21 +371,26 @@ keyboard( unsigned char key, int x, int y )
 			inputState = MOVE;
 			glutPostRedisplay();
 		}
+		*/
 		break;
 	case 'a':
-		rotation += 90;
+		//rotation += 90;
+		eye.z -= 0.1;
 		glutPostRedisplay();
 		break;
 	case 'd':
-		rotation -= 90;
+		eye.z += 0.1;
+		//rotation -= 90;
 		glutPostRedisplay();
 		break;
 	case 'w':
-		scale *= 1.1;
+		eye.y += 0.1;
+		//scale *= 1.1;
 		glutPostRedisplay();
 		break;
 	case 's':
-		scale *= 0.9;
+		eye.y -= 0.1;
+		//scale *= 0.9;
 		glutPostRedisplay();
 		break;
 	case 'h':

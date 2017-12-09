@@ -7,25 +7,29 @@ q:\users\obando_rodrigo\desktop\cubeglew\firstapp\mat.h(721): warning C4244: '='
 q:\users\obando_rodrigo\desktop\cubeglew\firstapp\mat.h(723): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 q:\users\obando_rodrigo\desktop\cubeglew\firstapp\mat.h(726): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 q:\users\obando_rodrigo\desktop\cubeglew\firstapp\mat.h(743): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(18): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(243): warning C4305: 'argument': truncation from 'double' to 'const GLfloat'
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(275): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(276): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(297): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(298): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(299): warning C4244: '=': conversion from 'GLfloat' to 'int', possible loss of data
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(318): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(322): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(326): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(329): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(337): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(338): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(339): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(357): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(358): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(359): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(376): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(382): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(413): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(20): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(27): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(31): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(32): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(33): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(276): warning C4305: 'argument': truncation from 'double' to 'const GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(334): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(335): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(378): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(382): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(387): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(392): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(397): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(400): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(408): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(409): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(410): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(428): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(429): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(430): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(447): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(453): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+q:\users\obando_rodrigo\desktop\cubeglew\firstapp\firstapp.cpp(484): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
   FirstApp.vcxproj -> Q:\Users\obando_rodrigo\Desktop\CubeGLEW\Debug\FirstApp.exe
   FirstApp.vcxproj -> Q:\Users\obando_rodrigo\Desktop\CubeGLEW\Debug\FirstApp.pdb (Partial PDB)
