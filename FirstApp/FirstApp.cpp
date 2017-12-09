@@ -13,19 +13,26 @@ GLfloat radians = 0.0;
 
 GLfloat offsety = 0.0;
 GLfloat offsetx = 0.0;
+
+GLfloat prevOffsety = 0.0;
+GLfloat prevOffsetx = 0.0;
+
 GLfloat rotation = 0.0;
 GLfloat scale = 1.0;
 
 GLfloat mag = 5.0;
 GLfloat offset = 2.0;
 
-
 GLfloat speed = 0.001;
 GLfloat width = 1024;
 GLfloat height = 768;
 
+double zFar = 100.0;
+double zNear = 0.3;
+
 bool secondLightOn = true;
 bool stopMovementOnRight = false;
+int perspective = 30;
 
 // light information
 vec4 lightOneDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
@@ -70,7 +77,7 @@ GLint lDTwoLocation, lATwoLocation, lSTwoLocation, lPTwoLocation;
 GLint shininessLocation;
 GLint mDLocation, mALocation, mSLocation;
 
-vec4 eye = { 5,15, -10,1 };
+vec4 eye = { 5,5,0,1 };
 
 enum drawStates { WAIT, MOVE, PLACE };
 enum tetrisPiece { O, L, J, I, S, T, Z };
@@ -264,7 +271,7 @@ void octahedron(string startKey, string endKey, point4 buffer) {
 	solidIndex.insert(pair<string, int>(endKey, Index));
 }
 
-drawStates inputState = WAIT;
+drawStates inputState = PLACE;
 //----------------------------------------------------------------------------
 /* This function initializes an array of 3d vectors
 and sends it to the graphics card along with shaders
@@ -345,7 +352,7 @@ init(void)
 	getLightLocationShaderIndices();
 
 	glClearColor(0.5, 0.5, 0.5, 1.0); // gray background
-	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glShadeModel(GL_FLAT);
 	glEnable(GL_DEPTH_TEST);
 
@@ -419,39 +426,15 @@ call it directly.
 
 void setupViewports(mat4 translate, mat4 camera, GLuint inProgram) {
 
-	glViewport(0, 0, width / 2 - 10, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// clear the window
 	modelViewLocation = glGetUniformLocation(program, "ModelView");
 	projectionLocation = glGetUniformLocation(program, "Projection");
 	modelView = RotateZ(rotation) * RotateX(rotation * 2) * RotateY(rotation * 3);
 	//vec4 eye = { 0,0,-5,1 };
-	projection = Perspective(30, 1.0, 0.3, 20.0) * camera;
-	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, translate * modelView);
-	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
-
-	//mat4 projection = Ortho(-mag + offset, mag + offset, -mag - offset, mag - offset, mag, -mag);
-	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Cube);
-	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Tetra);
-	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Dodeca);
-	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Octa);
-
-	if (stopMovementOnRight) {
-		vec4 at = { 0,0,0,1 };
-		vec4 up = { 0,1,0,0 };
-		vec4 eye = { 5,15, -10,1 };
-		camera = LookAt(eye, at, up);
-	}
-	else {
-		camera = LookAt(eye, at, up);
-	}
-
-	glViewport(width / 2 + 10, 0, width / 2 + 10, height);
-	modelViewLocation = glGetUniformLocation(program, "ModelView");
-	projectionLocation = glGetUniformLocation(program, "Projection");
-	modelView = RotateZ(rotationMovementOnRight()) * RotateX(rotationMovementOnRight() * 2) * RotateY(rotationMovementOnRight() * 3);
-	//vec4 eye = { 0,0,-5,1 };
-	projection = Perspective(30, 1.0, 0.3, 20.0) * camera;
+	// Perspective - zNear/zFar determines scope of perspective viewing box that clips 
+	// the rest out
+	projection = Perspective(30, 1.0, zNear, zFar) * camera;
 	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, translate * modelView);
 	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
 
@@ -476,7 +459,7 @@ void
 idle()
 {
 	//lightPosition.y -= 0.01;
-	rotation += speed;
+	//rotation += speed;
 	offsety = cos(radians) * 0.5;
 	offsetx = sin(radians) * 1.2;
 	glutPostRedisplay();
@@ -510,23 +493,23 @@ keyboard(unsigned char key, int x, int y)
 		}
 		glutPostRedisplay();
 		break;
-	case 'a':
+	case 'w':
 		//rotation += 90;
 		eye.z -= 0.1;
 		glutPostRedisplay();
 		break;
-	case 'd':
+	case 's':
 		eye.z += 0.1;
 		//rotation -= 90;
 		glutPostRedisplay();
 		break;
-	case 'w':
-		eye.y += 0.1;
+	case 'a':
+		eye.x -= 0.1;
 		//scale *= 1.1;
 		glutPostRedisplay();
 		break;
-	case 's':
-		eye.y -= 0.1;
+	case 'd':
+		eye.x += 0.1;
 		//scale *= 0.9;
 		glutPostRedisplay();
 		break;
@@ -545,10 +528,10 @@ keyboard(unsigned char key, int x, int y)
 void specialInput(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
-		at.y += 0.1;
+		at.z += 0.1;
 		break;
 	case GLUT_KEY_DOWN:
-		at.y -= 0.1;
+		at.z -= 0.1;
 		break;
 	case GLUT_KEY_RIGHT:
 		at.x += 0.1;
@@ -567,14 +550,23 @@ mouse(GLint button, GLint state, GLint x, GLint y)
 	y = height - y;
 	GLfloat xWorld = (GLfloat)x / width * 2 - 1;
 	GLfloat yWorld = (GLfloat)y / height * 2 - 1;
-	if (state == GLUT_DOWN && inputState == MOVE)
+	if (state == GLUT_DOWN && inputState == PLACE)
 	{
 		offsetx = xWorld;
 		offsety = yWorld;
-		inputState = PLACE;
+		inputState = MOVE;
 		printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
 		glutPostRedisplay();
 	}
+	else if (state == GLUT_DOWN && inputState == MOVE) {
+		inputState = PLACE;
+		glutPostRedisplay();
+	}
+}
+
+void recalculateDimensions() {
+	width = glutGet(GLUT_WINDOW_WIDTH);
+	height = glutGet(GLUT_WINDOW_HEIGHT);
 }
 
 void
@@ -582,16 +574,29 @@ mouseMove(GLint x, GLint y)
 {
 	if (inputState == MOVE)
 	{
-		width = glutGet(GLUT_WINDOW_WIDTH);
-		height = glutGet(GLUT_WINDOW_HEIGHT);
+		printf("I am moving my mouse");
+		recalculateDimensions();
 		y = height - y;
 		GLfloat xWorld = (GLfloat)x / width * 2 - 1;
 		GLfloat yWorld = (GLfloat)y / height * 2 - 1;
 		offsetx = xWorld;
 		offsety = yWorld;
 
-		at.x += offsetx;
-		at.y += offsety;
+		printf("x %i\n", x);
+		printf("y %i\n", y);
+
+		printf("offsetx %f\n", offsetx);
+		printf("offsety %f\n", offsety);
+
+		printf("xWorld %f\n", xWorld);
+		printf("yWorld %f\n", yWorld);
+
+		eye.x += (offsetx - prevOffsetx) * 10;
+		eye.y += (offsety - prevOffsety) * 10;
+
+		prevOffsetx = offsetx;
+		prevOffsety = offsety;
+
 		//printf("x: %i - y: %i || xWorld: %f - yWorld: %f\n", x, y, xWorld, yWorld);
 		glutPostRedisplay();
 	}
@@ -662,7 +667,7 @@ main(int argc, char **argv)
 	// create menug
 	//createMenu();
 	glutMouseFunc(mouse);
-	//glutPassiveMotionFunc(mouseMove);
+	glutPassiveMotionFunc(mouseMove);
 	glutSpecialFunc(specialInput);
 	glutIdleFunc(idle);
 
