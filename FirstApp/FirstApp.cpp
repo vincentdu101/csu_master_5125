@@ -36,7 +36,7 @@ GLfloat shininess = 50;
 
 GLint lDLocation, lALocation, lSLocation, lPLocation, mDLocation, mALocation, mSLocation, shininessLocation;
 
-GLuint textureID0;
+GLuint textureID0, textureID1;
 
 vec4 eye = { 0,0,-10,1 };
 
@@ -93,12 +93,12 @@ void quad(int a, int b, int c, int d)
 {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
 	//printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
-	colors[Index] = vertex_colors[a]; points[Index] = vertices[a]; normals[Index] = normal; texCoord[Index] = vec2(5, 0); Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = vertices[a]; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
 	colors[Index] = vertex_colors[b]; points[Index] = vertices[b]; normals[Index] = normal; texCoord[Index] = vec2(0, 0); Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = vertices[c]; normals[Index] = normal; texCoord[Index] = vec2(0, 5); Index++;
-	colors[Index] = vertex_colors[a]; points[Index] = vertices[a]; normals[Index] = normal; texCoord[Index] = vec2(5, 0); Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = vertices[c]; normals[Index] = normal; texCoord[Index] = vec2(0, 5); Index++;
-	colors[Index] = vertex_colors[d]; points[Index] = vertices[d]; normals[Index] = normal; texCoord[Index] = vec2(5, 5); Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = vertices[c]; normals[Index] = normal; texCoord[Index] = vec2(0, 1); Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = vertices[a]; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = vertices[c]; normals[Index] = normal; texCoord[Index] = vec2(0, 1); Index++;
+	colors[Index] = vertex_colors[d]; points[Index] = vertices[d]; normals[Index] = normal; texCoord[Index] = vec2(1, 1); Index++;
 }
 
 // generate 12 triangles: 36 vertices and 36 colors
@@ -254,13 +254,24 @@ init( void )
 	//img_cheryl.jpg
 	//img_test.bmp
 	//test_rect.png
-	textureID0 = SOIL_load_OGL_texture("test_rect.png", 
+	//mask.png
+	//normal jpg.jpg
+	textureID0 = SOIL_load_OGL_texture("normal jpg.jpg", 
 		SOIL_LOAD_AUTO, 
 		SOIL_CREATE_NEW_ID, 
 		SOIL_FLAG_POWER_OF_TWO | 
 		SOIL_FLAG_MIPMAPS | 
 		SOIL_FLAG_INVERT_Y | 
 		SOIL_FLAG_MULTIPLY_ALPHA | 
+		SOIL_FLAG_DDS_LOAD_DIRECT);
+
+	textureID1 = SOIL_load_OGL_texture("img_cheryl.jpg",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_POWER_OF_TWO |
+		SOIL_FLAG_MIPMAPS |
+		SOIL_FLAG_INVERT_Y |
+		SOIL_FLAG_MULTIPLY_ALPHA |
 		SOIL_FLAG_DDS_LOAD_DIRECT);
 
 
@@ -311,13 +322,23 @@ display( void )
 
 	glUseProgram(program1);
 	glEnable(GL_TEXTURE_2D);
-	glUniform1i(glGetUniformLocation(program, "texture"), 0);
+
+	glUniform1i(glGetUniformLocation(program1, "texture"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID0);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+
+	glUniform1i(glGetUniformLocation(program1, "second"), 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textureID1);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+
 	//modelView =  Translate(1.5, 0.0, 0.0) * modelView;
 	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, Translate(1.0, 0.0, 0.0) * modelView);
 	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
