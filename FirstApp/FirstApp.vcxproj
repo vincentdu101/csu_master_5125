@@ -101,10 +101,19 @@
   <ItemGroup>
     <None Include="fragmentShadingShader.frag" />
     <None Include="fragmentShadingShader.vert" />
+    <None Include="fragmentShadingTextureShader.frag" />
+    <None Include="fragmentShadingTextureShader.vert" />
     <None Include="simpleShader.frag" />
     <None Include="simpleShader.vert" />
     <None Include="vertexShadingShader.frag" />
     <None Include="vertexShadingShader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="img_cheryl.jpg" />
+    <Image Include="img_test.bmp" />
+    <Image Include="img_test.dds" />
+    <Image Include="img_test.png" />
+    <Image Include="test_rect.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

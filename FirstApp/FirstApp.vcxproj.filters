@@ -88,5 +88,28 @@
     <None Include="fragmentShadingShader.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="fragmentShadingTextureShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fragmentShadingTextureShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="img_cheryl.jpg">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="img_test.bmp">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="img_test.dds">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="img_test.png">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="test_rect.png">
+      <Filter>Source Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

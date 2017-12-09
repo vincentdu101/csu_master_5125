@@ -36,75 +36,32 @@ c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\fir
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(116): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(117): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(118): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(415): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(426): warning C4244: 'argument': conversion from 'GLfloat' to 'GLsizei', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(433): warning C4305: 'argument': truncation from 'double' to 'const GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(453): warning C4244: 'argument': conversion from 'GLfloat' to 'GLsizei', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(453): warning C4244: 'argument': conversion from 'GLfloat' to 'GLint', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(458): warning C4305: 'argument': truncation from 'double' to 'const GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(484): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(485): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(519): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(523): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(528): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(533): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(538): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(541): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(552): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(555): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(558): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(561): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(569): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(570): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(571): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(589): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(590): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(591): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(611): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(617): warning C4305: '*=': truncation from 'double' to 'GLfloat'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(648): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
-  stb_image_aug.c
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stb_image_aug.c(177): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stb_image_aug.c(251): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stb_image_aug.c(303): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stb_image_aug.c(1557): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stb_image_aug.c(2394): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stb_image_aug.c(2709): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stb_image_aug.c(2995): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stb_image_aug.c(3209): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stb_image_aug.c(3548): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stb_image_aug.c(3644): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stbi_dds_aug_c.h(362): warning C4018: '>': signed/unsigned mismatch
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stbi_dds_aug_c.h(366): warning C4018: '>': signed/unsigned mismatch
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stbi_dds_aug_c.h(390): warning C4018: '<': signed/unsigned mismatch
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stbi_dds_aug_c.h(427): warning C4018: '<': signed/unsigned mismatch
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\stbi_dds_aug_c.h(498): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-  SOIL.c
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\soil.c(1719): warning C4018: '<=': signed/unsigned mismatch
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\soil.c(1729): warning C4018: '<': signed/unsigned mismatch
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\soil.c(1841): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-  image_helper.c
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\image_helper.c(325): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\image_helper.c(366): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\image_helper.c(373): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\image_helper.c(415): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\image_helper.c(422): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-  image_DXT.c
-c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\image_dxt.c(92): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-  Generating Code...
-  LINK : C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\Vincent Du - Assignment\Debug\FirstApp.exe not found or not built by the last incremental link; performing full link
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(465): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(476): warning C4244: 'argument': conversion from 'GLfloat' to 'GLsizei', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(483): warning C4305: 'argument': truncation from 'double' to 'const GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(503): warning C4244: 'argument': conversion from 'GLfloat' to 'GLsizei', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(503): warning C4244: 'argument': conversion from 'GLfloat' to 'GLint', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(508): warning C4305: 'argument': truncation from 'double' to 'const GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(535): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(536): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(570): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(574): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(579): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(584): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(589): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(592): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(603): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(606): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(609): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(612): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(620): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(621): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(622): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(640): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(641): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(642): warning C4244: '=': conversion from 'GLfloat' to 'GLint', possible loss of data
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(662): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(668): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\vincentdu\desktop\csu_master\fall_2017\5125\vincent du - assignment\firstapp\firstapp.cpp(699): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\Vincent Du - Assignment\Debug\FirstApp.exe
   FirstApp.vcxproj -> C:\Users\vincentdu\Desktop\csu_master\fall_2017\5125\Vincent Du - Assignment\Debug\FirstApp.pdb (Partial PDB)

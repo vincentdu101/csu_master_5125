@@ -23,6 +23,8 @@ GLfloat offset = 2.0;
 // textures
 GLuint textureID0;
 GLuint textureID1;
+GLuint textureID2;
+GLuint textureID3;
 
 GLfloat speed = 0.001;
 GLfloat width = 1024;
@@ -142,6 +144,7 @@ point4 octaVertices[6] = {
 point4 points[NumPoints];
 color4 colors[NumPoints];
 vec3 normals[NumPoints];
+vec2 texCoord[NumPoints];
 
 int Index = 0;
 map<string, int> solidIndex;
@@ -154,14 +157,14 @@ void quad(int a, int b, int c, int d, point4 buffer)
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
 	//printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
 	// one triangle
-	colors[Index] = vertex_colors[a]; points[Index] = vertices[a] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = vertices[b] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = vertices[c] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = vertices[a] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = vertices[b] + buffer; normals[Index] = normal; texCoord[Index] = vec2(0, 0); Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = vertices[c] + buffer; normals[Index] = normal; texCoord[Index] = vec2(0, 1); Index++;
 
 	// two triangle
-	colors[Index] = vertex_colors[a]; points[Index] = vertices[a] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = vertices[c] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[d]; points[Index] = vertices[d] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = vertices[a] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = vertices[c] + buffer; normals[Index] = normal; texCoord[Index] = vec2(0, 1); Index++;
+	colors[Index] = vertex_colors[d]; points[Index] = vertices[d] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 1); Index++;
 }
 
 // triangle generates one triangles for each face and assigns colors
@@ -171,46 +174,46 @@ void triangle(int a, int b, int c, point4 buffer)
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
 	//printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
 	// one triangle
-	colors[Index] = vertex_colors[a]; points[Index] = vertices[a] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = vertices[b] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = vertices[c] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = vertices[a] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = vertices[b] + buffer; normals[Index] = normal; texCoord[Index] = vec2(0, 0); Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = vertices[c] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 1); Index++;
 }
 
 void hexagon(int a, int b, int c, int d, int e, point4 buffer) {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
 	// one triangle
-	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = hexagonVertices[c] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; texCoord[Index] = vec2(0, 0); Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = hexagonVertices[c] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 1); Index++;
 
-	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = hexagonVertices[c] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = hexagonVertices[c] + buffer; normals[Index] = normal; texCoord[Index] = vec2(0, 0); Index++;
+	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 1); Index++;
 
-	colors[Index] = vertex_colors[c]; points[Index] = hexagonVertices[c] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = hexagonVertices[c] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d] + buffer; normals[Index] = normal; texCoord[Index] = vec2(0, 0); Index++;
+	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 1); Index++;
 
-	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a] + buffer; normals[Index] = normal; texCoord[Index] = vec2(0, 0); Index++;
+	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 1); Index++;
 
-	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = hexagonVertices[a] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; texCoord[Index] = vec2(0, 0); Index++;
+	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 1); Index++;
 
-	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[d]; points[Index] = hexagonVertices[d] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = hexagonVertices[b] + buffer; normals[Index] = normal; texCoord[Index] = vec2(0, 0); Index++;
+	colors[Index] = vertex_colors[e]; points[Index] = hexagonVertices[e] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 1); Index++;
 }
 
 void octaTriangle(int a, int b, int c, point4 buffer) {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
 	//printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
 	// one triangle
-	colors[Index] = vertex_colors[a]; points[Index] = octaVertices[a] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = octaVertices[b] + buffer; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = octaVertices[c] + buffer; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = octaVertices[a] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = octaVertices[b] + buffer; normals[Index] = normal; texCoord[Index] = vec2(0, 0); Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = octaVertices[c] + buffer; normals[Index] = normal; texCoord[Index] = vec2(1, 1); Index++;
 }
 
 // generate 12 triangles: 36 vertices and 36 colors
@@ -286,16 +289,17 @@ void initializeBufferObjects() {
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	//glBufferData( GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW );
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors) + sizeof(normals), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors) + sizeof(normals) + sizeof(texCoord), NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(colors), colors);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors), sizeof(normals), normals);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors) + sizeof(normals), sizeof(texCoord), texCoord);
 }
 
 void initializeProgramAndShaders() {
 	// Load shaders and use the resulting shader program
-	program1 = InitShader("fragmentShadingShader.vert", "fragmentShadingShader.frag");
-	program = InitShader("fragmentShadingShader.vert", "fragmentShadingShader.frag");
+	program1 = InitShader("fragmentShadingTextureShader.vert", "fragmentShadingTextureShader.frag");
+	program = InitShader("fragmentShadingTextureShader.vert", "fragmentShadingTextureShader.frag");
 	// make these shaders the current shaders
 	glUseProgram(program);
 	currentProgram = program;
@@ -315,6 +319,10 @@ void initializeAttribPointers(GLuint program) {
 	GLuint loc2 = glGetAttribLocation(program, "vNormal");
 	glEnableVertexAttribArray(loc2);
 	glVertexAttribPointer(loc2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET((sizeof(points) + sizeof(colors))));
+
+	GLuint loc3 = glGetAttribLocation(program, "vTexCoord");
+	glEnableVertexAttribArray(loc3);
+	glVertexAttribPointer(loc3, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET((sizeof(points) + sizeof(colors) + sizeof(normals))));
 }
 
 void getLightLocationShaderIndices() {
@@ -332,6 +340,55 @@ void getLightLocationShaderIndices() {
 	mALocation = glGetUniformLocation(program, "materialAmbient");
 	mSLocation = glGetUniformLocation(program, "materialSpecular");
 	shininessLocation = glGetUniformLocation(program, "shininess");
+
+	//img_cheryl.jpg
+	//img_test.bmp
+	//test_rect.png
+	//img_test.dds
+	//img_test.png
+	textureID0 = SOIL_load_OGL_texture(
+		"img_rect.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_POWER_OF_TWO |
+		SOIL_FLAG_MIPMAPS |
+		SOIL_FLAG_INVERT_Y |
+		SOIL_FLAG_MULTIPLY_ALPHA |
+		SOIL_FLAG_DDS_LOAD_DIRECT
+	);
+
+	textureID1 = SOIL_load_OGL_texture(
+		"img_cheryl.jpg",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_POWER_OF_TWO |
+		SOIL_FLAG_MIPMAPS |
+		SOIL_FLAG_INVERT_Y |
+		SOIL_FLAG_MULTIPLY_ALPHA |
+		SOIL_FLAG_DDS_LOAD_DIRECT
+	);
+
+	textureID2 = SOIL_load_OGL_texture(
+		"img_rect.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_POWER_OF_TWO |
+		SOIL_FLAG_MIPMAPS |
+		SOIL_FLAG_INVERT_Y |
+		SOIL_FLAG_MULTIPLY_ALPHA |
+		SOIL_FLAG_DDS_LOAD_DIRECT
+	);
+
+	textureID3 = SOIL_load_OGL_texture(
+		"img_cheryl.jpg",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_POWER_OF_TWO |
+		SOIL_FLAG_MIPMAPS |
+		SOIL_FLAG_INVERT_Y |
+		SOIL_FLAG_MULTIPLY_ALPHA |
+		SOIL_FLAG_DDS_LOAD_DIRECT
+	);
 }
 
 void
@@ -352,7 +409,6 @@ init(void)
 	glPolygonMode(GL_FRONT, GL_FILL);
 	glShadeModel(GL_FLAT);
 	glEnable(GL_DEPTH_TEST);
-
 }
 
 void setupMaterialPerSolid(solidChoice choice) {
@@ -395,6 +451,24 @@ void drawSpecificTriangle(solidChoice choice) {
 
 void setupTriangleAndEnvironment(GLuint inProgram, mat4 translate, solidChoice choice) {
 	glUseProgram(inProgram);
+	
+	glEnable(GL_TEXTURE_2D);
+	glUniform1i(glGetUniformLocation(inProgram, "texture"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureID0);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+
+	glEnable(GL_TEXTURE_2D);
+	glUniform1i(glGetUniformLocation(inProgram, "second"), 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textureID1);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
 	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, translate * modelView);
 	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
@@ -464,6 +538,7 @@ void setupViewports(mat4 translate, mat4 camera, GLuint inProgram) {
 	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Tetra);
 	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Dodeca);
 	setupTriangleAndEnvironment(inProgram, Translate(-2.0, 0.0, 0.0) * translate, Octa);
+	glDisable(GL_TEXTURE_2D);
 }
 
 void
