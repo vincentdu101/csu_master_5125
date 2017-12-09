@@ -3,6 +3,7 @@
 #include "Angel.h"
 #include <map>;
 #include <iostream>;
+#include "SOIL.h";
 using namespace std;
 
 const int NumPoints = 5000;
@@ -19,6 +20,9 @@ GLfloat scale = 1.0;
 GLfloat mag = 5.0;
 GLfloat offset = 2.0;
 
+// textures
+GLuint textureID0;
+GLuint textureID1;
 
 GLfloat speed = 0.001;
 GLfloat width = 1024;

@@ -80,12 +80,23 @@
   <ItemGroup>
     <ClInclude Include="Angel.h" />
     <ClInclude Include="CheckError.h" />
+    <ClInclude Include="Example1.h" />
+    <ClInclude Include="image_DXT.h" />
+    <ClInclude Include="image_helper.h" />
     <ClInclude Include="mat.h" />
+    <ClInclude Include="SOIL.h" />
+    <ClInclude Include="stbi_DDS_aug.h" />
+    <ClInclude Include="stbi_DDS_aug_c.h" />
+    <ClInclude Include="stb_image_aug.h" />
     <ClInclude Include="vec.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FirstApp.cpp" />
+    <ClCompile Include="image_DXT.c" />
+    <ClCompile Include="image_helper.c" />
     <ClCompile Include="InitShader.cpp" />
+    <ClCompile Include="SOIL.c" />
+    <ClCompile Include="stb_image_aug.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragmentShadingShader.frag" />
