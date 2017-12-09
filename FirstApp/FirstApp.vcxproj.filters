@@ -55,5 +55,11 @@
     <None Include="fragmentShadingShader.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="fragmentShadingTextureShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fragmentShadingTextureShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

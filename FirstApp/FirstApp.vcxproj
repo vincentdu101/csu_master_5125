@@ -90,6 +90,8 @@
   <ItemGroup>
     <None Include="fragmentShadingShader.frag" />
     <None Include="fragmentShadingShader.vert" />
+    <None Include="fragmentShadingTextureShader.frag" />
+    <None Include="fragmentShadingTextureShader.vert" />
     <None Include="simpleShader.frag" />
     <None Include="simpleShader.vert" />
     <None Include="vertexShadingShader.frag" />

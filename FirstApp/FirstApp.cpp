@@ -54,7 +54,7 @@ point4 vertices[8] = {
 	point4(-0.5,  0.5, -0.5, 1.0),
 	point4(0.5,  0.5, -0.5, 1.0),
 	point4(0.5, -0.5, -0.5, 1.0)
-*/
+*/  //(1,0,3,2)
 	point4(-0.5, -0.5, -0.5, 1.0),
 	point4(0.5, -0.5, -0.5, 1.0),
 	point4(0.5,  0.5, -0.5, 1.0),
@@ -80,6 +80,7 @@ color4 vertex_colors[8] = {
 point4 points[NumPoints];
 color4 colors[NumPoints];
 vec3 normals[NumPoints];
+vec2 texCoord[NumPoints];
 
 
 // quad generates two triangles for each face and assigns colors
@@ -89,12 +90,12 @@ void quad(int a, int b, int c, int d)
 {
 	vec3 normal = cross(vertices[c] - vertices[a], vertices[b] - vertices[a]);
 	//printf("normal: x = %f, y = %f, z = %f.\n", normal.x, normal.y, normal.z);
-	colors[Index] = vertex_colors[a]; points[Index] = vertices[a]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = vertices[b]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = vertices[c]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[a]; points[Index] = vertices[a]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = vertices[c]; normals[Index] = normal; Index++;
-	colors[Index] = vertex_colors[d]; points[Index] = vertices[d]; normals[Index] = normal; Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = vertices[a]; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[b]; points[Index] = vertices[b]; normals[Index] = normal; texCoord[Index] = vec2(0, 0); Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = vertices[c]; normals[Index] = normal; texCoord[Index] = vec2(0, 1); Index++;
+	colors[Index] = vertex_colors[a]; points[Index] = vertices[a]; normals[Index] = normal; texCoord[Index] = vec2(1, 0); Index++;
+	colors[Index] = vertex_colors[c]; points[Index] = vertices[c]; normals[Index] = normal; texCoord[Index] = vec2(0, 1); Index++;
+	colors[Index] = vertex_colors[d]; points[Index] = vertices[d]; normals[Index] = normal; texCoord[Index] = vec2(1, 1); Index++;
 }
 
 // generate 12 triangles: 36 vertices and 36 colors
@@ -207,13 +208,14 @@ init( void )
     glGenBuffers( 1, &buffer );
     glBindBuffer( GL_ARRAY_BUFFER, buffer );
     //glBufferData( GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW );
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors) + sizeof(normals), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors) + sizeof(normals) + sizeof(texCoord), NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(colors), colors);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors), sizeof(normals), normals);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors) + sizeof(normals), sizeof(texCoord), texCoord);
 
     // Load shaders and use the resulting shader program
-    program1 = InitShader( "vertexShadingShader.vert", "vertexShadingShader.frag" );
+    program1 = InitShader( "fragmentShadingTextureShader.vert", "fragmentShadingTextureShader.frag" );
 	program = InitShader("fragmentShadingShader.vert", "fragmentShadingShader.frag");
 	// make these shaders the current shaders
     glUseProgram( program );
@@ -232,6 +234,10 @@ init( void )
 	GLuint loc2 = glGetAttribLocation(program, "vNormal");
 	glEnableVertexAttribArray(loc2);
 	glVertexAttribPointer(loc2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET((sizeof(points) + sizeof(colors))));
+
+	GLuint loc3 = glGetAttribLocation(program1, "vTexCoord");
+	glEnableVertexAttribArray(loc3);
+	glVertexAttribPointer(loc3, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET((sizeof(points) + sizeof(colors) + sizeof(normals))));
 
 	lDLocation = glGetUniformLocation(program, "lightDiffuse");
 	lALocation = glGetUniformLocation(program, "lightAmbient");
@@ -290,6 +296,11 @@ display( void )
 	glDrawArrays(GL_TRIANGLES, 0, NumPoints);
 
 	glUseProgram(program1);
+	glEnable(GL_TEXTURE_2D);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 	//modelView =  Translate(1.5, 0.0, 0.0) * modelView;
 	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, Translate(1.0, 0.0, 0.0) * modelView);
 	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
@@ -302,6 +313,7 @@ display( void )
 	glUniform4fv(mSLocation, 1, materialSpecular);
 	glUniform1f(shininessLocation, shininess);
 	glDrawArrays(GL_TRIANGLES, 0, NumPoints);
+	glDisable(GL_TEXTURE_2D);
 
 /*
 	switch (inputState)
