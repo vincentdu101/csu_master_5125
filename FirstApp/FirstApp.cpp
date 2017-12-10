@@ -26,6 +26,7 @@ GLuint textureID1;
 GLuint textureID2;
 GLuint textureID3;
 GLuint textureID4;
+GLuint textureID5;
 
 GLfloat speed = 0.001;
 GLfloat width = 1024;
@@ -353,6 +354,7 @@ void setupSharedTextures() {
 	//brick.jpg
 	//stone.jpg
 	//tile.png
+	//normal.jpg
 	textureID0 = SOIL_load_OGL_texture(
 		"test_rect.png",
 		SOIL_LOAD_AUTO,
@@ -399,6 +401,17 @@ void setupSharedTextures() {
 
 	textureID4 = SOIL_load_OGL_texture(
 		"brick.jpg",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_POWER_OF_TWO |
+		SOIL_FLAG_MIPMAPS |
+		SOIL_FLAG_INVERT_Y |
+		SOIL_FLAG_MULTIPLY_ALPHA |
+		SOIL_FLAG_DDS_LOAD_DIRECT
+	);
+
+	textureID5 = SOIL_load_OGL_texture(
+		"normal jpg.jpg",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_POWER_OF_TWO |
@@ -470,11 +483,7 @@ void drawSpecificTriangle(solidChoice choice) {
 }
 
 void enableTextureViaShape(GLuint inProgram, solidChoice choice) {
-	if (inProgram == program1) {
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, textureID4);
-	}
-	else if (choice == Cube) {
+	if (choice == Cube) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, textureID1);
 	}
@@ -492,11 +501,22 @@ void enableTextureViaShape(GLuint inProgram, solidChoice choice) {
 	}
 }
 
+void handleDifferentNormalMapping(GLuint inProgram) {
+	if (inProgram == program1) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID5);
+	}
+	else {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID0);
+	}
+}
+
 void implementTexture(GLuint inProgram, solidChoice choice) {
 	glEnable(GL_TEXTURE_2D);
 	glUniform1i(glGetUniformLocation(inProgram, "texture"), 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textureID0);
+	enableTextureViaShape(inProgram, choice);
+	handleDifferentNormalMapping(inProgram);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
