@@ -413,9 +413,9 @@ void
 init(void)
 {
 	colorcube("cube_start", "cube_end", point4(-1.5, 0.0, 0.0, 0.0));
-	tetrahedron("tetra_start", "tetra_end", point4(1.5, 0.0, 0.0, 0.0));
-	dodecahedron("dode_start", "dode_end", point4(1.5, 2.5, 0.0, 0.0));
 	octahedron("octa_start", "octa_end", point4(-1.5, 1.5, 0.0, 0.0));
+	dodecahedron("dode_start", "dode_end", point4(1.5, 2.5, 0.0, 0.0));
+	tetrahedron("tetra_start", "tetra_end", point4(1.5, 0.0, 0.0, 0.0));
 
 	setupSharedTextures();
 	initializeBufferObjects();
