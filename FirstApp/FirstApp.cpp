@@ -33,6 +33,7 @@ GLfloat height = 768;
 
 bool secondLightOn = true;
 bool stopMovementOnRight = false;
+bool brickOnlyTexture = false;
 
 // light information
 vec4 lightOneDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
@@ -299,49 +300,51 @@ void initializeBufferObjects() {
 
 void initializeProgramAndShaders() {
 	// Load shaders and use the resulting shader program
-	program1 = InitShader("fragmentShadingTextureShader.vert", "fragmentShadingTextureShader.frag");
+	program1 = InitShader("fragmentShadingTextureShader1.vert", "fragmentShadingTextureShader1.frag");
 	program = InitShader("fragmentShadingTextureShader.vert", "fragmentShadingTextureShader.frag");
 	// make these shaders the current shaders
-	glUseProgram(program);
-	currentProgram = program;
+	//glUseProgram(program);
+	//currentProgram = program;
 }
 
-void initializeAttribPointers(GLuint program) {
+void initializeAttribPointers(GLuint inProgram) {
 	// Initialize the vertex position attribute from the vertex shader
-	GLuint loc = glGetAttribLocation(program, "vPosition");
+	GLuint loc = glGetAttribLocation(inProgram, "vPosition");
 	glEnableVertexAttribArray(loc);
 	glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 	// Initialize the vertex color attribute from the vertex shader
-	GLuint loc1 = glGetAttribLocation(program, "vColor");
+	GLuint loc1 = glGetAttribLocation(inProgram, "vColor");
 	glEnableVertexAttribArray(loc1);
 	glVertexAttribPointer(loc1, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));
 
-	GLuint loc2 = glGetAttribLocation(program, "vNormal");
+	GLuint loc2 = glGetAttribLocation(inProgram, "vNormal");
 	glEnableVertexAttribArray(loc2);
 	glVertexAttribPointer(loc2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET((sizeof(points) + sizeof(colors))));
 
-	GLuint loc3 = glGetAttribLocation(program, "vTexCoord");
+	GLuint loc3 = glGetAttribLocation(inProgram, "vTexCoord");
 	glEnableVertexAttribArray(loc3);
 	glVertexAttribPointer(loc3, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET((sizeof(points) + sizeof(colors) + sizeof(normals))));
 }
 
-void getLightLocationShaderIndices() {
-	lDOneLocation = glGetUniformLocation(program, "lightOneDiffuse");
-	lAOneLocation = glGetUniformLocation(program, "lightOneAmbient");
-	lSOneLocation = glGetUniformLocation(program, "lightOneSpecular");
-	lPOneLocation = glGetUniformLocation(program, "lightOnePosition");
+void getLightLocationShaderIndices(GLuint inProgram) {
+	lDOneLocation = glGetUniformLocation(inProgram, "lightOneDiffuse");
+	lAOneLocation = glGetUniformLocation(inProgram, "lightOneAmbient");
+	lSOneLocation = glGetUniformLocation(inProgram, "lightOneSpecular");
+	lPOneLocation = glGetUniformLocation(inProgram, "lightOnePosition");
 
-	lDTwoLocation = glGetUniformLocation(program, "lightTwoDiffuse");
-	lATwoLocation = glGetUniformLocation(program, "lightTwoAmbient");
-	lSTwoLocation = glGetUniformLocation(program, "lightTwoSpecular");
-	lPTwoLocation = glGetUniformLocation(program, "lightTwoPosition");
+	lDTwoLocation = glGetUniformLocation(inProgram, "lightTwoDiffuse");
+	lATwoLocation = glGetUniformLocation(inProgram, "lightTwoAmbient");
+	lSTwoLocation = glGetUniformLocation(inProgram, "lightTwoSpecular");
+	lPTwoLocation = glGetUniformLocation(inProgram, "lightTwoPosition");
 
-	mDLocation = glGetUniformLocation(program, "materialDiffuse");
-	mALocation = glGetUniformLocation(program, "materialAmbient");
-	mSLocation = glGetUniformLocation(program, "materialSpecular");
-	shininessLocation = glGetUniformLocation(program, "shininess");
+	mDLocation = glGetUniformLocation(inProgram, "materialDiffuse");
+	mALocation = glGetUniformLocation(inProgram, "materialAmbient");
+	mSLocation = glGetUniformLocation(inProgram, "materialSpecular");
+	shininessLocation = glGetUniformLocation(inProgram, "shininess");
+}
 
+void setupSharedTextures() {
 	//img_cheryl.jpg
 	//img_test.bmp
 	//test_rect.png
@@ -414,11 +417,13 @@ init(void)
 	dodecahedron("dode_start", "dode_end", point4(1.5, 2.5, 0.0, 0.0));
 	octahedron("octa_start", "octa_end", point4(-1.5, 1.5, 0.0, 0.0));
 
+	setupSharedTextures();
 	initializeBufferObjects();
 	initializeProgramAndShaders();
 	initializeAttribPointers(program);
 	initializeAttribPointers(program1);
-	getLightLocationShaderIndices();
+	getLightLocationShaderIndices(program);
+	getLightLocationShaderIndices(program1);
 
 	glClearColor(0.5, 0.5, 0.5, 1.0); // gray background
 	glPolygonMode(GL_FRONT, GL_FILL);
@@ -464,8 +469,12 @@ void drawSpecificTriangle(solidChoice choice) {
 	}
 }
 
-void enableTextureViaShape(solidChoice choice) {
-	if (choice == Cube) {
+void enableTextureViaShape(GLuint inProgram, solidChoice choice) {
+	if (inProgram == program1) {
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+	}
+	else if (choice == Cube) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, textureID1);
 	}
@@ -494,7 +503,7 @@ void implementTexture(GLuint inProgram, solidChoice choice) {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
 	glUniform1i(glGetUniformLocation(inProgram, "second"), 1);
-	enableTextureViaShape(choice);
+	enableTextureViaShape(inProgram, choice);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -534,8 +543,8 @@ void setupViewports(mat4 translate, mat4 camera, GLuint inProgram) {
 	glViewport(0, 0, width / 2 - 10, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// clear the window
-	modelViewLocation = glGetUniformLocation(program, "ModelView");
-	projectionLocation = glGetUniformLocation(program, "Projection");
+	modelViewLocation = glGetUniformLocation(inProgram, "ModelView");
+	projectionLocation = glGetUniformLocation(inProgram, "Projection");
 	modelView = RotateZ(rotation) * RotateX(rotation * 2) * RotateY(rotation * 3);
 	//vec4 eye = { 0,0,-5,1 };
 	projection = Perspective(30, 1.0, 0.3, 20.0) * camera;
@@ -559,8 +568,8 @@ void setupViewports(mat4 translate, mat4 camera, GLuint inProgram) {
 	}
 
 	glViewport(width / 2 + 10, 0, width / 2 + 10, height);
-	modelViewLocation = glGetUniformLocation(program, "ModelView");
-	projectionLocation = glGetUniformLocation(program, "Projection");
+	modelViewLocation = glGetUniformLocation(inProgram, "ModelView");
+	projectionLocation = glGetUniformLocation(inProgram, "Projection");
 	modelView = RotateZ(rotationMovementOnRight()) * RotateX(rotationMovementOnRight() * 2) * RotateY(rotationMovementOnRight() * 3);
 	//vec4 eye = { 0,0,-5,1 };
 	projection = Perspective(30, 1.0, 0.3, 20.0) * camera;
@@ -579,8 +588,13 @@ void
 display(void)
 {
 	mat4 camera = LookAt(eye, at, up);
-	setupViewports(Translate(1.0, 1.0, 1.0), camera, program);
-
+	if (brickOnlyTexture) {
+		setupViewports(Translate(1.0, 1.0, 1.0), camera, program1);
+	}
+	else {
+		setupViewports(Translate(1.0, 1.0, 1.0), camera, program);
+	}
+	
 	// flush the buffer
 	glutSwapBuffers();
 }
@@ -651,7 +665,11 @@ keyboard(unsigned char key, int x, int y)
 		break;
 	case 'z':
 		stopMovementOnRight = !stopMovementOnRight;
-	}
+	case 'x':
+		brickOnlyTexture = !brickOnlyTexture;
+		glutPostRedisplay();
+		break;
+	} 
 
 }
 

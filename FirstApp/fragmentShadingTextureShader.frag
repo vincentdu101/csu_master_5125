@@ -24,20 +24,6 @@ uniform float shininess;
 uniform sampler2D texture;
 uniform sampler2D second;
 
-vec4 computeTexture(vec2 coord) {
-	if (coord.x > 1.5 && coord.y > 1.5) {
-		return vec4(0.0, 0.0, 0.0, 1.0);
-	} else if (coord.x < 0.5 && coord.y < 0.5) {
-		return vec4(0.0, 0.0, 1.0, 1.0);
-	}
-
-	if (coord.x > 0.5 && coord.y > 0.5 && coord.x < 1.5 && coord.y < 1.5) {
-		return vec4(1.0, 0.0, 0.0, 1.0);
-	}
-
-	return vec4(1.0, 1.0, 1.0, 1.0);
-}
-
 vec4 totalCalculatedLightingForFirstLighting() {
 	vec3 N = normalize(fN);
 	vec3 E = normalize(fE);

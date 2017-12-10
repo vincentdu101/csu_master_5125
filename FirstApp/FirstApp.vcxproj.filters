@@ -94,6 +94,12 @@
     <None Include="fragmentShadingTextureShader.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="fragmentShadingTextureShader1.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fragmentShadingTextureShader1.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="img_cheryl.jpg">

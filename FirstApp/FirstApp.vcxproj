@@ -103,6 +103,8 @@
     <None Include="fragmentShadingShader.vert" />
     <None Include="fragmentShadingTextureShader.frag" />
     <None Include="fragmentShadingTextureShader.vert" />
+    <None Include="fragmentShadingTextureShader1.frag" />
+    <None Include="fragmentShadingTextureShader1.vert" />
     <None Include="simpleShader.frag" />
     <None Include="simpleShader.vert" />
     <None Include="vertexShadingShader.frag" />
