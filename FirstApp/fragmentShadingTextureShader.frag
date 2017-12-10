@@ -48,11 +48,11 @@ vec4 totalCalculatedLightingForFirstLighting() {
 	N = N * (texture2D(texture, fTexCoord).yxz - 0.5) * 2;
 
 	vec3 H = normalize(L + E);
-	vec4 ambient = lightOneAmbient * materialAmbient;
+	vec4 ambient = lightOneAmbient * texture2D(second, fTexCoord);
 	float Kd = max(dot(L, N), 0.0);
-	vec4 diffuse = Kd * lightOneDiffuse * materialDiffuse * texture2D(second, fTexCoord);
+	vec4 diffuse = Kd * lightOneDiffuse * texture2D(second, fTexCoord);
 	float Ks = pow(max(dot(N, H),0.0), shininess);
-	vec4 specular = Ks * lightOneSpecular * materialSpecular * texture2D(second, fTexCoord);
+	vec4 specular = Ks * lightOneSpecular * texture2D(second, fTexCoord);
 	if(dot(L, N) < 0.0)
 	{
 		specular = vec4(0.0, 0.0, 0.0, 1.0);
@@ -68,11 +68,11 @@ vec4 totalCalculatedLightingForSecondLighting() {
 	N = N * (texture2D(texture, fTexCoord).yxz - 0.5) * 2;
 
 	vec3 H = normalize(L + E);
-	vec4 ambient = lightTwoAmbient * materialAmbient;
+	vec4 ambient = lightTwoAmbient * texture2D(second, fTexCoord);
 	float Kd = max(dot(L, N), 0.0);
-	vec4 diffuse = Kd * lightTwoDiffuse * materialDiffuse * texture2D(second, fTexCoord);
+	vec4 diffuse = Kd * lightTwoDiffuse * texture2D(second, fTexCoord);
 	float Ks = pow(max(dot(N, H),0.0), shininess);
-	vec4 specular = Ks * lightTwoSpecular * materialSpecular * texture2D(second, fTexCoord);
+	vec4 specular = Ks * lightTwoSpecular * texture2D(second, fTexCoord);
 	if(dot(L, N) < 0.0)
 	{
 		specular = vec4(0.0, 0.0, 0.0, 1.0);

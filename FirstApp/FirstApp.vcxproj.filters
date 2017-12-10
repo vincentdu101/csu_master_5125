@@ -111,5 +111,14 @@
     <Image Include="test_rect.png">
       <Filter>Source Files</Filter>
     </Image>
+    <Image Include="brick.jpg">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="stone.jpg">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="tile.png">
+      <Filter>Source Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

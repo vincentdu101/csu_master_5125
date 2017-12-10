@@ -25,6 +25,7 @@ GLuint textureID0;
 GLuint textureID1;
 GLuint textureID2;
 GLuint textureID3;
+GLuint textureID4;
 
 GLfloat speed = 0.001;
 GLfloat width = 1024;
@@ -346,8 +347,11 @@ void getLightLocationShaderIndices() {
 	//test_rect.png
 	//img_test.dds
 	//img_test.png
+	//brick.jpg
+	//stone.jpg
+	//tile.png
 	textureID0 = SOIL_load_OGL_texture(
-		"img_rect.png",
+		"test_rect.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_POWER_OF_TWO |
@@ -369,7 +373,7 @@ void getLightLocationShaderIndices() {
 	);
 
 	textureID2 = SOIL_load_OGL_texture(
-		"img_rect.png",
+		"tile.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_POWER_OF_TWO |
@@ -380,7 +384,18 @@ void getLightLocationShaderIndices() {
 	);
 
 	textureID3 = SOIL_load_OGL_texture(
-		"img_cheryl.jpg",
+		"stone.jpg",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_POWER_OF_TWO |
+		SOIL_FLAG_MIPMAPS |
+		SOIL_FLAG_INVERT_Y |
+		SOIL_FLAG_MULTIPLY_ALPHA |
+		SOIL_FLAG_DDS_LOAD_DIRECT
+	);
+
+	textureID4 = SOIL_load_OGL_texture(
+		"brick.jpg",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_POWER_OF_TWO |
@@ -449,9 +464,26 @@ void drawSpecificTriangle(solidChoice choice) {
 	}
 }
 
-void setupTriangleAndEnvironment(GLuint inProgram, mat4 translate, solidChoice choice) {
-	glUseProgram(inProgram);
-	
+void enableTextureViaShape(solidChoice choice) {
+	if (choice == Cube) {
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, textureID1);
+	}
+	else if (choice == Tetra) {
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, textureID2);
+	}
+	else if (choice == Dodeca) {
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, textureID3);
+	}
+	else if (choice == Octa) {
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+	}
+}
+
+void implementTexture(GLuint inProgram, solidChoice choice) {
 	glEnable(GL_TEXTURE_2D);
 	glUniform1i(glGetUniformLocation(inProgram, "texture"), 0);
 	glActiveTexture(GL_TEXTURE0);
@@ -461,15 +493,17 @@ void setupTriangleAndEnvironment(GLuint inProgram, mat4 translate, solidChoice c
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
-	glEnable(GL_TEXTURE_2D);
 	glUniform1i(glGetUniformLocation(inProgram, "second"), 1);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, textureID1);
+	enableTextureViaShape(choice);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+}
 
+void setupTriangleAndEnvironment(GLuint inProgram, mat4 translate, solidChoice choice) {
+	glUseProgram(inProgram);
+	implementTexture(inProgram, choice);
 	glUniformMatrix4fv(modelViewLocation, 1, GL_TRUE, translate * modelView);
 	glUniformMatrix4fv(projectionLocation, 1, GL_TRUE, projection);
 	glUniform4fv(lAOneLocation, 1, lightOneAmbient);
@@ -481,7 +515,7 @@ void setupTriangleAndEnvironment(GLuint inProgram, mat4 translate, solidChoice c
 	glUniform4fv(lSTwoLocation, 1, lightTwoSpecular);
 	glUniform4fv(lPTwoLocation, 1, lightTwoPosition);
 	glUniform1f(shininessLocation, shininess);
-	setupMaterialPerSolid(choice);
+	//setupMaterialPerSolid(choice);
 	drawSpecificTriangle(choice);
 }
 
